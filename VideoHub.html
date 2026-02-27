@@ -3,39 +3,1480 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CMDAI – Demo Wideo</title>
+    <title>XPH Studio - Platforma Wideo</title>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-card: #21262d;
+            --bg-hover: #30363d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --accent: #ff6b35;
+            --accent-hover: #ff8555;
+            --border: #30363d;
+            --success: #238636;
+        }
+
         body {
-            background: #111;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
         }
-        video {
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 62px;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            z-index: 1000;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background-image: url('logo.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        /* Nawigacja */
+        .nav-center {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            max-width: 600px;
+            margin: 0 24px;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-input {
             width: 100%;
-            max-width: 900px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 12px 8px 36px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--bg-card);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .clear-search {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px;
+            display: none;
+        }
+
+        .clear-search.visible {
+            display: block;
+        }
+
+        /* Sekcja użytkownika */
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #238636 0%, #2ea043 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(35, 134, 54, 0.4);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .logout-btn {
+            background: var(--bg-hover);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        /* Sidebar */
+        .layout {
+            display: flex;
+            margin-top: 62px;
+            min-height: calc(100vh - 62px);
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 20px 0;
+            position: fixed;
+            height: calc(100vh - 62px);
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 24px;
+        }
+
+        .sidebar-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0 20px 8px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 20px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .sidebar-item.active {
+            background: var(--bg-card);
+            border-left-color: var(--accent);
+        }
+
+        .sidebar-item .icon {
+            width: 20px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .sidebar-item.active .icon {
+            color: var(--accent);
+        }
+
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 20px 8px 32px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .playlist-item:hover {
+            color: var(--text-primary);
+            background: var(--bg-hover);
+        }
+
+        .playlist-item.active {
+            color: var(--accent);
+            background: var(--bg-card);
+        }
+
+        .playlist-count {
+            font-size: 11px;
+            background: var(--bg-card);
+            padding: 2px 6px;
             border-radius: 10px;
-            margin-top: 20px;
         }
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
+
+        /* Main Content */
+        .main-container {
+            flex: 1;
+            margin-left: 260px;
+            padding: 32px;
+            max-width: calc(100% - 260px);
         }
-        p {
-            opacity: 0.8;
+
+        .page-header {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 400;
+            color: var(--text-primary);
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .breadcrumb a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* Grid wideo */
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        /* Karta wideo */
+        .video-card {
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .video-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.15);
+        }
+
+        .thumbnail-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: var(--bg-primary);
+            overflow: hidden;
+        }
+
+        .thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .video-card:hover .thumbnail {
+            transform: scale(1.03);
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 64px;
+            height: 64px;
+            background: rgba(13, 17, 23, 0.9);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .video-card:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .play-icon {
+            font-size: 24px;
+            color: white;
+            margin-left: 4px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .video-duration {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .video-info-card {
+            padding: 16px;
+        }
+
+        .video-title-card {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+        }
+
+        .video-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .video-tag {
+            background: var(--accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Strona wideo (odtwarzacz) */
+        .video-page {
+            display: none;
+            margin-left: 260px;
+            min-height: calc(100vh - 62px);
+            background: #000;
+        }
+
+        .video-page.active {
+            display: block;
+        }
+
+        .video-player-container {
+            width: 100%;
+            background: #000;
+            position: relative;
+        }
+
+        .video-player-main {
+            width: 100%;
+            max-height: 70vh;
+            display: block;
+        }
+
+        .video-content {
+            background: var(--bg-primary);
+            padding: 24px 32px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .video-header {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .video-title-main {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .video-meta-main {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            flex-wrap: wrap;
+        }
+
+        .video-meta-main span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .video-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+
+        .playlist-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg-card);
+            color: var(--accent);
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+        }
+
+        /* Nawigacja playlisty */
+        .playlist-nav {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .playlist-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .playlist-nav-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .playlist-nav-count {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .playlist-videos-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .playlist-video-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .playlist-video-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .playlist-video-item.active {
+            background: var(--bg-card);
+            border: 1px solid var(--accent);
+        }
+
+        .playlist-video-thumb {
+            width: 80px;
+            height: 45px;
+            border-radius: 4px;
+            object-fit: cover;
+            background: var(--bg-primary);
+        }
+
+        .playlist-video-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .playlist-video-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .playlist-video-duration {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .playlist-video-number {
+            width: 24px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .playlist-video-item.active .playlist-video-number {
+            color: var(--accent);
+        }
+
+        /* Sekcja komentarzy */
+        .comments-section {
+            margin-top: 24px;
+        }
+
+        .comments-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+        }
+
+        .giscus-wrapper {
+            min-height: 400px;
+        }
+
+        /* Przycisk powrotu */
+        .back-btn {
+            position: fixed;
+            top: 78px;
+            left: 276px;
+            z-index: 100;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            grid-column: 1 / -1;
+        }
+
+        .empty-state h2 {
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            font-weight: 400;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .main-container, .video-page {
+                margin-left: 0;
+                max-width: 100%;
+            }
+            
+            .back-btn {
+                left: 16px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 0 16px;
+            }
+            
+            .nav-center {
+                display: none;
+            }
+            
+            .main-container {
+                padding: 16px;
+            }
+            
+            .videos-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .video-content {
+                padding: 16px;
+            }
+            
+            .video-player-main {
+                max-height: 50vh;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-hover);
+            border-radius: 5px;
+            border: 2px solid var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border);
+        }
+
+        /* Animacje */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease;
         }
     </style>
 </head>
 <body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-section">
+            <a href="#/" class="logo" onclick="router.navigate('/'); return false;">
+                <div class="logo-icon"></div>
+                <span>XPH Studio</span>
+            </a>
+        </div>
 
-    <h1>CMDAI – Demo Wideo</h1>
-    <p>You are playing in demo because git hub is not able to play your file because it is too big</p>
+        <div class="nav-center">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="search-input" placeholder="Szukaj filmów..." autocomplete="off">
+                <button class="clear-search" id="clear-search" onclick="clearSearch()">✕</button>
+            </div>
+        </div>
 
-    <video controls>
-        <source src="assets/CMDAI.mp4" type="video/mp4">
-        Twoja przeglądarka nie obsługuje odtwarzacza wideo.
-    </video>
+        <div class="user-section" id="user-section">
+            <button class="login-btn" id="login-btn" onclick="login()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+                Zaloguj przez GitHub
+            </button>
 
+            <div class="user-profile" id="user-profile" style="display: none;">
+                <img class="user-avatar" id="user-avatar" src="" alt="Avatar">
+                <span class="user-name" id="user-name"></span>
+                <button class="logout-btn" onclick="logout()">Wyloguj</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Menu</div>
+                <a href="#/" class="sidebar-item active" data-route="/" onclick="router.navigate('/'); return false;">
+                    <span class="icon">🏠</span>
+                    <span>Wszystkie filmy</span>
+                </a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Playlisty / Projekty</div>
+                <div id="playlists-container">
+                    <!-- Playlisty generowane dynamicznie -->
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Tagi</div>
+                <div id="tags-container">
+                    <!-- Tagi generowane dynamicznie -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content - Lista filmów -->
+        <main class="main-container" id="main-container">
+            <div class="breadcrumb" id="breadcrumb" style="display: none;">
+                <a href="#/" onclick="router.navigate('/'); return false;">Strona główna</a>
+                <span>/</span>
+                <span id="breadcrumb-current"></span>
+            </div>
+
+            <div class="page-header">
+                <h1 class="page-title" id="page-title">Wszystkie filmy</h1>
+                <span id="results-count" style="color: var(--text-secondary); font-size: 14px;"></span>
+            </div>
+
+            <div class="videos-grid" id="videos-grid">
+                <!-- Filmy generowane dynamicznie -->
+            </div>
+        </main>
+
+        <!-- Strona pojedynczego wideo -->
+        <div class="video-page" id="video-page">
+            <a href="#/" class="back-btn" onclick="router.navigate('/'); return false;">
+                ← Powrót do listy
+            </a>
+
+            <div class="video-player-container">
+                <video class="video-player-main" id="main-player" controls>
+                    <source src="" type="video/mp4">
+                    Twoja przeglądarka nie obsługuje odtwarzacza wideo.
+                </video>
+            </div>
+
+            <div class="video-content">
+                <div id="playlist-badge-container"></div>
+                
+                <div class="video-header">
+                    <h1 class="video-title-main" id="video-title"></h1>
+                    <div class="video-meta-main">
+                        <span>📅 <span id="video-date"></span></span>
+                        <span>👤 <span id="video-author"></span></span>
+                        <span id="video-tag-container"></span>
+                    </div>
+                </div>
+
+                <div class="video-description" id="video-description"></div>
+
+                <div class="playlist-nav" id="playlist-nav" style="display: none;">
+                    <div class="playlist-nav-header">
+                        <span class="playlist-nav-title" id="playlist-nav-title"></span>
+                        <span class="playlist-nav-count" id="playlist-nav-count"></span>
+                    </div>
+                    <div class="playlist-videos-list" id="playlist-videos-list"></div>
+                </div>
+
+                <div class="comments-section">
+                    <div class="comments-header">
+                        <span>💬</span>
+                        <span>Komentarze</span>
+                    </div>
+                    <div class="giscus-wrapper" id="giscus-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // KONFIGURACJA
+        // ============================================
+        const AUTH0_CONFIG = {
+            domain: "TWOJ_DOMAIN.auth0.com",
+            clientId: "TWOJ_CLIENT_ID",
+            authorizationParams: {
+                redirect_uri: window.location.origin + window.location.pathname,
+                connection: "github"
+            }
+        };
+
+        // Konfiguracja źródeł wideo (możesz dodawać więcej repo)
+        const SOURCES = {
+            main: {
+                url: "https://raw.githubusercontent.com/Krzyzyk33/CMDAI/main/assets/",
+                name: "CMDAI"
+            }
+        };
+
+        // Definicje playlist/grup
+        const PLAYLISTS = {
+            'cmdai-series': {
+                name: 'Seria CMDAI',
+                description: 'Wszystkie filmy związane z projektem CMDAI',
+                videos: ['cmdai-demo', 'cmdai-tutorial-1', 'cmdai-tutorial-2'],
+                icon: '🤖'
+            },
+            'tutorials': {
+                name: 'Poradniki',
+                description: 'Tutoriale i materiały edukacyjne',
+                videos: ['cmdai-tutorial-1', 'cmdai-tutorial-2'],
+                icon: '📚'
+            },
+            'demos': {
+                name: 'Dema',
+                description: 'Prezentacje i dema projektów',
+                videos: ['cmdai-demo'],
+                icon: '🎬'
+            }
+        };
+
+        // Tagi
+        const TAGS = {
+            'ai': { name: 'Sztuczna Inteligencja', icon: '🧠' },
+            'tutorial': { name: 'Tutorial', icon: '📖' },
+            'demo': { name: 'Demo', icon: '🎯' },
+            'github': { name: 'GitHub', icon: '🐙' }
+        };
+
+        // Baza filmów - teraz z tagami i playlistami
+        const VIDEOS_DB = [
+            {
+                id: "cmdai-demo",
+                title: "Demo projektu CMDAI",
+                date: "2024-01-20",
+                filename: "CMDAIVideo.mp4",
+                thumbnail: null,
+                description: "Prezentacja możliwości systemu CMDAI. Pokazuję główne funkcje i sposób użycia.",
+                author: "Krzyzyk33",
+                duration: "5:32",
+                tags: ['ai', 'demo'],
+                playlists: ['cmdai-series', 'demos'],
+                source: 'main'
+            },
+            {
+                id: "cmdai-tutorial-1",
+                title: "CMDAI - Podstawy obsługi",
+                date: "2024-01-25",
+                filename: "tutorial1.mp4",
+                thumbnail: null,
+                description: "Pierwszy odcinek serii tutoriali. Uczymy się podstaw obsługi CMDAI.",
+                author: "Krzyzyk33",
+                duration: "12:45",
+                tags: ['ai', 'tutorial'],
+                playlists: ['cmdai-series', 'tutorials'],
+                source: 'main'
+            },
+            {
+                id: "cmdai-tutorial-2",
+                title: "CMDAI - Zaawansowane funkcje",
+                date: "2024-02-01",
+                filename: "tutorial2.mp4",
+                thumbnail: null,
+                description: "Drugi odcinek - zagłębiamy się w zaawansowane możliwości systemu.",
+                author: "Krzyzyk33",
+                duration: "18:20",
+                tags: ['ai', 'tutorial'],
+                playlists: ['cmdai-series', 'tutorials'],
+                source: 'main'
+            }
+        ];
+
+        const GISCUS_CONFIG = {
+            repo: "Krzyzyk33/CMDAI",
+            repoId: "R_kgDORT_FgQ",
+            category: "Comments",
+            categoryId: "DIC_kwDORT_Fgc4C3Q86",
+            reactionsEnabled: "1",
+            emitMetadata: "0",
+            inputPosition: "top",
+            theme: "dark",
+            lang: "pl",
+            loading: "lazy"
+        };
+
+        // ============================================
+        // ROUTER - Zarządzanie URL
+        // ============================================
+        const router = {
+            currentRoute: '/',
+            
+            init() {
+                window.addEventListener('popstate', () => this.handleRoute());
+                this.handleRoute();
+            },
+
+            navigate(path) {
+                history.pushState(null, '', '#' + path);
+                this.handleRoute();
+            },
+
+            handleRoute() {
+                const hash = window.location.hash.slice(1) || '/';
+                this.currentRoute = hash;
+                
+                // Parsowanie ścieżki
+                const parts = hash.split('/').filter(p => p);
+                
+                if (parts.length === 0) {
+                    // Strona główna
+                    this.showHome();
+                } else if (parts[0] === 'watch' && parts[1]) {
+                    // Strona wideo /watch/:id
+                    this.showVideo(parts[1]);
+                } else if (parts[0] === 'playlist' && parts[1]) {
+                    // Strona playlisty /playlist/:id
+                    this.showPlaylist(parts[1]);
+                } else if (parts[0] === 'tag' && parts[1]) {
+                    // Strona tagu /tag/:id
+                    this.showTag(parts[1]);
+                } else if (parts[0] === 'search' && parts[1]) {
+                    // Wyszukiwanie /search/:query
+                    this.showSearch(decodeURIComponent(parts[1]));
+                } else {
+                    this.showHome();
+                }
+                
+                this.updateSidebar();
+            },
+
+            showHome() {
+                this.hideVideoPage();
+                this.showMainContainer();
+                document.getElementById('page-title').textContent = 'Wszystkie filmy';
+                document.getElementById('breadcrumb').style.display = 'none';
+                renderVideos(VIDEOS_DB);
+            },
+
+            showVideo(videoId) {
+                const video = VIDEOS_DB.find(v => v.id === videoId);
+                if (!video) {
+                    this.navigate('/');
+                    return;
+                }
+
+                this.hideMainContainer();
+                this.showVideoPage(video);
+            },
+
+            showPlaylist(playlistId) {
+                const playlist = PLAYLISTS[playlistId];
+                if (!playlist) {
+                    this.navigate('/');
+                    return;
+                }
+
+                this.hideVideoPage();
+                this.showMainContainer();
+                
+                document.getElementById('page-title').textContent = playlist.name;
+                document.getElementById('breadcrumb').style.display = 'flex';
+                document.getElementById('breadcrumb-current').textContent = playlist.name;
+                
+                const playlistVideos = VIDEOS_DB.filter(v => v.playlists.includes(playlistId));
+                renderVideos(playlistVideos);
+            },
+
+            showTag(tagId) {
+                const tag = TAGS[tagId];
+                if (!tag) {
+                    this.navigate('/');
+                    return;
+                }
+
+                this.hideVideoPage();
+                this.showMainContainer();
+                
+                document.getElementById('page-title').textContent = tag.name;
+                document.getElementById('breadcrumb').style.display = 'flex';
+                document.getElementById('breadcrumb-current').textContent = tag.name;
+                
+                const taggedVideos = VIDEOS_DB.filter(v => v.tags.includes(tagId));
+                renderVideos(taggedVideos);
+            },
+
+            showSearch(query) {
+                this.hideVideoPage();
+                this.showMainContainer();
+                
+                document.getElementById('page-title').textContent = 'Wyniki wyszukiwania';
+                document.getElementById('breadcrumb').style.display = 'flex';
+                document.getElementById('breadcrumb-current').textContent = `"${query}"`;
+                
+                document.getElementById('search-input').value = query;
+                document.getElementById('clear-search').classList.add('visible');
+                
+                const results = searchVideos(query);
+                renderVideos(results);
+            },
+
+            showMainContainer() {
+                document.getElementById('main-container').style.display = 'block';
+            },
+
+            hideMainContainer() {
+                document.getElementById('main-container').style.display = 'none';
+            },
+
+            showVideoPage(video) {
+                const page = document.getElementById('video-page');
+                page.classList.add('active');
+                document.body.style.overflow = 'auto';
+                
+                // Ustawienie playera
+                const player = document.getElementById('main-player');
+                const videoUrl = SOURCES[video.source].url + video.filename;
+                player.querySelector('source').src = videoUrl;
+                player.load();
+                player.play().catch(e => console.log('Autoplay blocked'));
+                
+                // Informacje o wideo
+                document.getElementById('video-title').textContent = video.title;
+                document.getElementById('video-date').textContent = formatDate(video.date);
+                document.getElementById('video-author').textContent = video.author;
+                document.getElementById('video-description').textContent = video.description;
+                
+                // Tagi
+                const tagContainer = document.getElementById('video-tag-container');
+                tagContainer.innerHTML = video.tags.map(tagId => {
+                    const tag = TAGS[tagId];
+                    return `<span class="video-tag" onclick="router.navigate('/tag/${tagId}')" style="cursor: pointer;">${tag ? tag.name : tagId}</span>`;
+                }).join('');
+                
+                // Playlist badge
+                const badgeContainer = document.getElementById('playlist-badge-container');
+                if (video.playlists.length > 0) {
+                    const primaryPlaylist = PLAYLISTS[video.playlists[0]];
+                    badgeContainer.innerHTML = `
+                        <div class="playlist-badge" onclick="router.navigate('/playlist/${video.playlists[0]}')" style="cursor: pointer;">
+                            📁 ${primaryPlaylist.name}
+                        </div>
+                    `;
+                } else {
+                    badgeContainer.innerHTML = '';
+                }
+                
+                // Nawigacja playlisty
+                this.renderPlaylistNav(video);
+                
+                // Komentarze
+                loadGiscus(video.title);
+                
+                window.scrollTo(0, 0);
+            },
+
+            hideVideoPage() {
+                document.getElementById('video-page').classList.remove('active');
+                const player = document.getElementById('main-player');
+                player.pause();
+                document.body.style.overflow = '';
+            },
+
+            renderPlaylistNav(currentVideo) {
+                const nav = document.getElementById('playlist-nav');
+                const container = document.getElementById('playlist-videos-list');
+                
+                // Znajdź pierwszą playlistę zawierającą ten film
+                const playlistId = currentVideo.playlists[0];
+                if (!playlistId) {
+                    nav.style.display = 'none';
+                    return;
+                }
+                
+                const playlist = PLAYLISTS[playlistId];
+                const playlistVideos = VIDEOS_DB.filter(v => v.playlists.includes(playlistId));
+                
+                document.getElementById('playlist-nav-title').textContent = playlist.name;
+                document.getElementById('playlist-nav-count').textContent = `${playlistVideos.length} filmów`;
+                
+                container.innerHTML = playlistVideos.map((v, index) => `
+                    <a href="#/watch/${v.id}" 
+                       class="playlist-video-item ${v.id === currentVideo.id ? 'active' : ''}"
+                       onclick="router.navigate('/watch/${v.id}'); return false;">
+                        <span class="playlist-video-number">${v.id === currentVideo.id ? '▶' : index + 1}</span>
+                        <img src="${getThumbnailUrl(v.thumbnail) || getPlaceholderThumbnail(v.title)}" class="playlist-video-thumb" alt="">
+                        <div class="playlist-video-info">
+                            <div class="playlist-video-title">${v.title}</div>
+                            <div class="playlist-video-duration">${v.duration}</div>
+                        </div>
+                    </a>
+                `).join('');
+                
+                nav.style.display = 'block';
+            },
+
+            updateSidebar() {
+                // Aktualizacja aktywnych elementów w sidebarze
+                document.querySelectorAll('.sidebar-item, .playlist-item').forEach(el => {
+                    el.classList.remove('active');
+                });
+                
+                const hash = window.location.hash;
+                if (hash === '#/' || hash === '') {
+                    document.querySelector('[data-route="/"]').classList.add('active');
+                } else if (hash.startsWith('#/playlist/')) {
+                    const playlistId = hash.split('/')[2];
+                    document.querySelector(`[data-playlist="${playlistId}"]`)?.classList.add('active');
+                }
+            }
+        };
+
+        // ============================================
+        // FUNKCJE POMOCNICZE
+        // ============================================
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('pl-PL', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function getVideoUrl(video) {
+            return SOURCES[video.source].url + video.filename;
+        }
+
+        function getThumbnailUrl(thumbnailName) {
+            if (!thumbnailName) return null;
+            return SOURCES.main.url + thumbnailName;
+        }
+
+        function getPlaceholderThumbnail(title) {
+            const colors = ['#ff6b35', '#f7931e', '#238636', '#58a6ff', '#8957e5', '#8b949e'];
+            const color = colors[title.length % colors.length];
+            return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='360'%3E%3Crect fill='${encodeURIComponent(color)}' width='640' height='360'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='48' fill='white'%3E▶%3C/text%3E%3C/svg%3E`;
+        }
+
+        function searchVideos(query) {
+            const lowerQuery = query.toLowerCase();
+            return VIDEOS_DB.filter(video => 
+                video.title.toLowerCase().includes(lowerQuery) ||
+                video.description.toLowerCase().includes(lowerQuery) ||
+                video.author.toLowerCase().includes(lowerQuery) ||
+                video.tags.some(tag => {
+                    const tagInfo = TAGS[tag];
+                    return tag.toLowerCase().includes(lowerQuery) || 
+                           (tagInfo && tagInfo.name.toLowerCase().includes(lowerQuery));
+                })
+            );
+        }
+
+        // ============================================
+        // RENDEROWANIE
+        // ============================================
+        function renderVideos(videos) {
+            const grid = document.getElementById('videos-grid');
+            const countEl = document.getElementById('results-count');
+            
+            countEl.textContent = videos.length > 0 ? `${videos.length} filmów` : '';
+            
+            if (videos.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <h2>Brak filmów</h2>
+                        <p>Nie znaleziono filmów spełniających kryteria.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sortuj po dacie (najnowsze pierwsze)
+            const sorted = [...videos].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            grid.innerHTML = sorted.map(video => `
+                <a href="#/watch/${video.id}" class="video-card fade-in" onclick="router.navigate('/watch/${video.id}'); return false;">
+                    <div class="thumbnail-wrapper">
+                        <img class="thumbnail" src="${getThumbnailUrl(video.thumbnail) || getPlaceholderThumbnail(video.title)}" alt="${video.title}" loading="lazy">
+                        <div class="play-overlay">
+                            <span class="play-icon">▶</span>
+                        </div>
+                        ${video.duration ? `<span class="video-duration">${video.duration}</span>` : ''}
+                    </div>
+                    <div class="video-info-card">
+                        <div class="video-title-card">${video.title}</div>
+                        <div class="video-meta">
+                            <span>${video.author}</span>
+                            <span>•</span>
+                            <span>${formatDate(video.date)}</span>
+                        </div>
+                        ${video.tags.length > 0 ? `
+                            <div style="margin-top: 8px; display: flex; gap: 4px; flex-wrap: wrap;">
+                                ${video.tags.slice(0, 2).map(tagId => {
+                                    const tag = TAGS[tagId];
+                                    return `<span class="video-tag">${tag ? tag.icon : ''} ${tag ? tag.name : tagId}</span>`;
+                                }).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        function renderSidebar() {
+            // Playlisty
+            const playlistsContainer = document.getElementById('playlists-container');
+            playlistsContainer.innerHTML = Object.entries(PLAYLISTS).map(([id, playlist]) => {
+                const count = VIDEOS_DB.filter(v => v.playlists.includes(id)).length;
+                return `
+                    <a href="#/playlist/${id}" class="playlist-item" data-playlist="${id}" onclick="router.navigate('/playlist/${id}'); return false;">
+                        <span>${playlist.icon} ${playlist.name}</span>
+                        <span class="playlist-count">${count}</span>
+                    </a>
+                `;
+            }).join('');
+            
+            // Tagi
+            const tagsContainer = document.getElementById('tags-container');
+            tagsContainer.innerHTML = Object.entries(TAGS).map(([id, tag]) => {
+                const count = VIDEOS_DB.filter(v => v.tags.includes(id)).length;
+                return `
+                    <a href="#/tag/${id}" class="sidebar-item" onclick="router.navigate('/tag/${id}'); return false;">
+                        <span class="icon">${tag.icon}</span>
+                        <span>${tag.name}</span>
+                        <span style="margin-left: auto; color: var(--text-secondary); font-size: 12px;">${count}</span>
+                    </a>
+                `;
+            }).join('');
+        }
+
+        // ============================================
+        // WYSZUKIWANIE
+        // ============================================
+        function setupSearch() {
+            const input = document.getElementById('search-input');
+            const clearBtn = document.getElementById('clear-search');
+            
+            let debounceTimer;
+            
+            input.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                const query = e.target.value.trim();
+                
+                if (query) {
+                    clearBtn.classList.add('visible');
+                    debounceTimer = setTimeout(() => {
+                        router.navigate(`/search/${encodeURIComponent(query)}`);
+                    }, 500);
+                } else {
+                    clearBtn.classList.remove('visible');
+                    if (router.currentRoute.startsWith('/search')) {
+                        router.navigate('/');
+                    }
+                }
+            });
+            
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const query = e.target.value.trim();
+                    if (query) {
+                        router.navigate(`/search/${encodeURIComponent(query)}`);
+                    }
+                }
+            });
+        }
+
+        function clearSearch() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('clear-search').classList.remove('visible');
+            router.navigate('/');
+        }
+
+        // ============================================
+        // AUTH0
+        // ============================================
+        let auth0Client = null;
+        let currentUser = null;
+
+        async function initAuth0() {
+            try {
+                auth0Client = await auth0.createAuth0Client({
+                    domain: AUTH0_CONFIG.domain,
+                    clientId: AUTH0_CONFIG.clientId,
+                    authorizationParams: AUTH0_CONFIG.authorizationParams
+                });
+
+                if (location.search.includes("code=") && location.search.includes("state=")) {
+                    await auth0Client.handleRedirectCallback();
+                    window.history.replaceState({}, document.title, window.location.hash || '#');
+                }
+
+                const isAuthenticated = await auth0Client.isAuthenticated();
+
+                if (isAuthenticated) {
+                    currentUser = await auth0Client.getUser();
+                    showUserProfile(currentUser);
+                } else {
+                    showLoginButton();
+                }
+            } catch (error) {
+                console.error("Błąd Auth0:", error);
+                showLoginButton();
+            }
+        }
+
+        async function login() {
+            if (!auth0Client) {
+                alert("Auth0 nie jest skonfigurowany! Sprawdź AUTH0_CONFIG.");
+                return;
+            }
+            await auth0Client.loginWithRedirect();
+        }
+
+        async function logout() {
+            if (!auth0Client) return;
+            await auth0Client.logout({
+                logoutParams: {
+                    returnTo: window.location.origin + window.location.pathname
+                }
+            });
+        }
+
+        function showUserProfile(user) {
+            document.getElementById('login-btn').style.display = 'none';
+            document.getElementById('user-profile').style.display = 'flex';
+            document.getElementById('user-avatar').src = user.picture || 'https://github.com/github.png';
+            document.getElementById('user-name').textContent = user.nickname || user.name || 'Użytkownik';
+        }
+
+        function showLoginButton() {
+            document.getElementById('login-btn').style.display = 'flex';
+            document.getElementById('user-profile').style.display = 'none';
+        }
+
+        // ============================================
+        // KOMENTARZE
+        // ============================================
+        function loadGiscus(title) {
+            const container = document.getElementById('giscus-container');
+            container.innerHTML = '';
+
+            const script = document.createElement('script');
+            script.src = 'https://giscus.app/client.js';
+            script.setAttribute('data-repo', GISCUS_CONFIG.repo);
+            script.setAttribute('data-repo-id', GISCUS_CONFIG.repoId);
+            script.setAttribute('data-category', GISCUS_CONFIG.category);
+            script.setAttribute('data-category-id', GISCUS_CONFIG.categoryId);
+            script.setAttribute('data-mapping', 'specific');
+            script.setAttribute('data-term', title);
+            script.setAttribute('data-strict', '0');
+            script.setAttribute('data-reactions-enabled', GISCUS_CONFIG.reactionsEnabled);
+            script.setAttribute('data-emit-metadata', GISCUS_CONFIG.emitMetadata);
+            script.setAttribute('data-input-position', GISCUS_CONFIG.inputPosition);
+            script.setAttribute('data-theme', GISCUS_CONFIG.theme);
+            script.setAttribute('data-lang', GISCUS_CONFIG.lang);
+            script.setAttribute('data-loading', GISCUS_CONFIG.loading);
+            script.setAttribute('crossorigin', 'anonymous');
+            script.async = true;
+
+            container.appendChild(script);
+        }
+
+        // ============================================
+        // INICJALIZACJA
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            initAuth0();
+            renderSidebar();
+            setupSearch();
+            router.init();
+        });
+    </script>
 </body>
 </html>
