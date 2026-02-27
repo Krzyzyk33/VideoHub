@@ -1,41 +1,1285 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CMDAI – Demo Wideo</title>
+    <title>XPH Studio - Video Platform</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-card: #21262d;
+            --bg-hover: #30363d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --accent: #ff6b35;
+            --border: #30363d;
+        }
+
         body {
-            background: #111;
-            color: #fff;
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 62px;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            z-index: 1000;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        /* LOGO - PUT YOUR LOGO FILE HERE */
+        /* File logo.png (or other) must be in same folder as this HTML */
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background-image: url('logo.png'); /* <-- CHANGE TO YOUR LOGO FILENAME */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        /* Search */
+        .search-section {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 24px;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 12px 8px 36px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .clear-search {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: none;
+        }
+
+        .clear-search.visible {
+            display: block;
+        }
+
+        /* Layout */
+        .layout {
+            display: flex;
+            margin-top: 62px;
+            min-height: calc(100vh - 62px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 20px 0;
+            position: fixed;
+            height: calc(100vh - 62px);
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 24px;
+        }
+
+        .sidebar-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0 16px 8px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .sidebar-item.active {
+            background: var(--bg-card);
+            border-left-color: var(--accent);
+        }
+
+        .sidebar-item .icon {
+            width: 20px;
             text-align: center;
+        }
+
+        .playlist-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 16px 8px 32px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .playlist-item:hover {
+            color: var(--text-primary);
+            background: var(--bg-hover);
+        }
+
+        .playlist-item.active {
+            color: var(--accent);
+            background: var(--bg-card);
+        }
+
+        .playlist-count {
+            font-size: 11px;
+            background: var(--bg-card);
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        /* Main Content */
+        .main-container {
+            flex: 1;
+            margin-left: 240px;
+            padding: 32px;
+            max-width: calc(100% - 240px);
+        }
+
+        .page-header {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 400;
+            color: var(--text-primary);
+        }
+
+        .results-info {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        /* Video Grid */
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        /* Video Card */
+        .video-card {
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .video-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.15);
+        }
+
+        .thumbnail-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: var(--bg-primary);
+            overflow: hidden;
+        }
+
+        .thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .video-card:hover .thumbnail {
+            transform: scale(1.03);
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 64px;
+            height: 64px;
+            background: rgba(13, 17, 23, 0.9);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .video-card:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .play-icon {
+            font-size: 24px;
+            color: white;
+            margin-left: 4px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .video-info-card {
+            padding: 16px;
+        }
+
+        .video-title-card {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+        }
+
+        .video-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .playlist-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        /* Fullscreen Video */
+        .fullscreen-video {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            z-index: 9999;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .fullscreen-video.active {
+            display: flex;
+        }
+
+        .video-container-full {
+            width: 100%;
+            background: #000;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .video-player-full {
+            width: 100%;
+            max-height: 70vh;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* Error Overlay */
+        .video-error {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
             padding: 20px;
         }
-        video {
-            width: 100%;
-            max-width: 900px;
-            border-radius: 10px;
-            margin-top: 20px;
+
+        .video-error.visible {
+            display: block;
         }
-        h1 {
-            font-size: 2rem;
+
+        .video-error h3 {
+            color: var(--accent);
             margin-bottom: 10px;
         }
-        p {
-            opacity: 0.8;
+
+        /* Content Below */
+        .content-below {
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border);
+            padding: 24px 32px;
+            max-width: 1280px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .video-info-section {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .video-title-full {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+
+        .video-meta-full {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            flex-wrap: wrap;
+        }
+
+        .video-description-full {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .debug-url {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            word-break: break-all;
+        }
+
+        /* Playlist Navigation */
+        .playlist-nav {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .playlist-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .playlist-nav-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .playlist-nav-count {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .playlist-videos-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .playlist-video-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .playlist-video-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .playlist-video-item.active {
+            background: var(--bg-card);
+            border: 1px solid var(--accent);
+        }
+
+        .playlist-video-thumb {
+            width: 80px;
+            height: 45px;
+            border-radius: 4px;
+            object-fit: cover;
+            background: var(--bg-primary);
+        }
+
+        .playlist-video-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .playlist-video-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .playlist-video-number {
+            width: 24px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .playlist-video-item.active .playlist-video-number {
+            color: var(--accent);
+        }
+
+        /* Comments */
+        .comments-section {
+            margin-top: 24px;
+        }
+
+        .comments-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+        }
+
+        .giscus-wrapper {
+            min-height: 400px;
+        }
+
+        /* Close Button */
+        .close-fullscreen {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            width: 40px;
+            height: 40px;
+            background: rgba(22, 27, 34, 0.95);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 10001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            backdrop-filter: blur(8px);
+        }
+
+        .close-fullscreen:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent);
+        }
+
+        .close-fullscreen.visible {
+            display: flex;
+        }
+
+        .hidden-title {
+            display: none;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            grid-column: 1 / -1;
+        }
+
+        .empty-state h2 {
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            font-weight: 400;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .main-container {
+                margin-left: 0;
+                max-width: 100%;
+                padding: 16px;
+            }
+
+            .header {
+                padding: 0 16px;
+            }
+
+            .search-section {
+                display: none;
+            }
+
+            .videos-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .content-below {
+                padding: 16px;
+            }
+
+            .video-player-full {
+                max-height: 50vh;
+            }
+
+            .playlist-nav {
+                display: none;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-hover);
+            border-radius: 5px;
+            border: 2px solid var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border);
         }
     </style>
 </head>
 <body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-section">
+            <a href="#" class="logo" onclick="goHome(); return false;">
+                <div class="logo-icon"></div>
+                <span>XPH Studio</span>
+            </a>
+        </div>
 
-    <h1>CMDAI – Demo Wideo</h1>
-    <p>You are playing in demo because git hub is not able to play your file because it is too big</p>
+        <!-- Search -->
+        <div class="search-section">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="search-input" placeholder="Search videos..." autocomplete="off">
+                <button class="clear-search" id="clear-search" onclick="clearSearch()">✕</button>
+            </div>
+        </div>
 
-    <video controls>
-        <source src="assets/CMDAI.mp4" type="video/mp4">
-        Twoja przeglądarka nie obsługuje odtwarzacza wideo.
-    </video>
+        <!-- Empty user section (login removed) -->
+        <div class="user-section" id="user-section"></div>
+    </header>
 
+    <div class="layout">
+        <!-- Sidebar with playlists -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Menu</div>
+                <a href="#" class="sidebar-item active" onclick="showAllVideos(); return false;">
+                    <span class="icon">🏠</span>
+                    <span>All Videos</span>
+                </a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Playlists</div>
+                <div id="playlists-container">
+                    <!-- Playlists generated dynamically -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-container" id="main-container">
+            <div class="page-header">
+                <h1 class="page-title" id="page-title">Videos</h1>
+                <div class="results-info" id="results-info"></div>
+            </div>
+
+            <div class="videos-grid" id="videos-grid">
+                <!-- Videos will be generated here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Fullscreen Video -->
+    <div class="fullscreen-video" id="fullscreen-video">
+        <button class="close-fullscreen" id="close-fullscreen" onclick="closeFullscreen()">←</button>
+
+        <div class="video-container-full">
+            <video class="video-player-full" id="fullscreen-player" controls>
+                <source src="" type="video/mp4">
+                Your browser does not support the video player.
+            </video>
+            <div class="video-error" id="video-error">
+                <h3>❌ Error Loading Video</h3>
+                <p>Cannot load video. Check if file exists on server.</p>
+                <p class="debug-url" id="error-url"></p>
+            </div>
+        </div>
+
+        <!-- Content below video -->
+        <div class="content-below">
+            <div class="hidden-title" id="hidden-title" data-title=""></div>
+
+            <div class="video-info-section">
+                <h2 class="video-title-full" id="video-title"></h2>
+                <div class="video-meta-full">
+                    <span id="video-date"></span>
+                    <span id="video-playlist-badge"></span>
+                </div>
+                <div class="video-description-full" id="video-description"></div>
+                <div class="debug-url" id="video-url-display"></div>
+            </div>
+
+            <!-- Playlist Navigation -->
+            <div class="playlist-nav" id="playlist-nav" style="display: none;">
+                <div class="playlist-nav-header">
+                    <span class="playlist-nav-title" id="playlist-nav-title"></span>
+                    <span class="playlist-nav-count" id="playlist-nav-count"></span>
+                </div>
+                <div class="playlist-videos-list" id="playlist-videos-list"></div>
+            </div>
+
+            <div class="comments-section">
+                <div class="comments-header">
+                    <span>💬</span>
+                    <span>Comments</span>
+                </div>
+                <div class="giscus-wrapper" id="giscus-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURATION - ADD VIDEOS AND PLAYLISTS HERE
+        // ============================================
+        
+        /*
+        HOW TO ADD A VIDEO:
+        1. Copy the template below
+        2. Paste into 'videos' array (before the closing ])
+        3. Fill in the data:
+           - id: unique identifier (no spaces!)
+           - title: video title
+           - date: date in YYYY-MM-DD format
+           - filename: video filename (e.g., "video.mp4")
+           - thumbnail: thumbnail filename (e.g., "thumb.jpg") or null for auto
+           - description: description under video
+           - playlists: ["playlist-name"] - optional, which playlist it belongs to
+        
+        HOW TO ADD A THUMBNAIL:
+        - Put JPG/PNG file in same folder as videos on GitHub
+        - Enter filename in 'thumbnail' field
+        - Example: thumbnail: "my-thumbnail.jpg"
+        */
+        
+        const videos = [
+            {
+                id: "cmdai-demo",
+                title: "CMDAI Project Demo",
+                date: "2024-01-20",
+                filename: "Videos/CMDAIVideo.mp4",
+                thumbnail: null,  // <-- ADD THUMBNAIL FILENAME HERE (e.g., "thumb.jpg") or leave null
+                description: "Presentation of CMDAI system capabilities.",
+                playlists: ["cmdai"]
+            }
+            // ADD NEW VIDEOS HERE, BEFORE CLOSING ]
+            // Example with thumbnail:
+            // {
+            //     id: "my-video",
+            //     title: "My Super Video",
+            //     date: "2024-02-27",
+            //     filename: "my-video.mp4",
+            //     thumbnail: "my-thumbnail.jpg",  // <-- THUMBNAIL
+            //     description: "This is my video.",
+            //     playlists: ["my-playlist"]
+            // }
+        ];
+
+        /*
+        HOW TO ADD A PLAYLIST:
+        1. Copy the template below
+        2. Paste into 'playlists' object (before closing })
+        3. Fill in the data:
+           - key: unique technical name (no spaces!)
+           - name: display name
+           - icon: emoji as icon
+        */
+        
+        const playlists = {
+            "cmdai": {
+                name: "CMDAI Project",
+                icon: "🤖",
+                description: "Videos related to CMDAI project"
+            }
+            // ADD NEW PLAYLISTS HERE, BEFORE CLOSING }
+            // Example:
+            // "my-playlist": {
+            //     name: "My Playlist",
+            //     icon: "🎬",
+            //     description: "My favorite videos"
+            // }
+        };
+
+        // ============================================
+        // URL CONFIGURATION - FOR GITHUB PAGES
+        // ============================================
+        
+        // IMPORTANT: This must be the correct GitHub Pages URL
+        // Format: https://USERNAME.github.io/REPO_NAME/
+        // Your repo: https://github.com/Krzyzyk33/VideoHub
+        // So the URL should be:
+        const BASE_URL = "https://krzyzyk33.github.io/VideoHub/";
+        
+        // ============================================
+        // OTHER CONFIGURATION
+        // ============================================
+        
+        const GISCUS_CONFIG = {
+            repo: "Krzyzyk33/CMDAI",
+            repoId: "R_kgDORaUIPg",
+            category: "Comments",
+            categoryId: "DIC_kwDORT_Fgc4C3Q86",
+            reactionsEnabled: "1",
+            emitMetadata: "0",
+            inputPosition: "top",
+            theme: "dark",
+            lang: "en",
+            loading: "lazy"
+        };
+
+        // ============================================
+        // GLOBAL VARIABLES
+        // ============================================
+        let currentPlaylist = null;
+        let searchQuery = '';
+
+        // ============================================
+        // HELPER FUNCTIONS
+        // ============================================
+        function getVideoUrl(filename) {
+            // Remove leading slash if present to avoid double slashes
+            const cleanFilename = filename.startsWith('/') ? filename.slice(1) : filename;
+            return BASE_URL + cleanFilename;
+        }
+
+        function getThumbnailUrl(thumbnailName) {
+            if (!thumbnailName) return null;
+            const cleanName = thumbnailName.startsWith('/') ? thumbnailName.slice(1) : thumbnailName;
+            return BASE_URL + cleanName;
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function getPlaceholderThumbnail(title) {
+            const colors = ['#ff6b35', '#f7931e', '#238636', '#58a6ff', '#8957e5', '#8b949e'];
+            const color = colors[title.length % colors.length];
+            return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='360'%3E%3Crect fill='${encodeURIComponent(color)}' width='640' height='360'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='48' fill='white'%3E▶%3C/text%3E%3C/svg%3E`;
+        }
+
+        function getPlaylistName(playlistId) {
+            return playlists[playlistId] ? playlists[playlistId].name : playlistId;
+        }
+
+        function getPlaylistIcon(playlistId) {
+            return playlists[playlistId] ? playlists[playlistId].icon : '📁';
+        }
+
+        // ============================================
+        // SEARCH
+        // ============================================
+        function setupSearch() {
+            const input = document.getElementById('search-input');
+            const clearBtn = document.getElementById('clear-search');
+            
+            let debounceTimer;
+            
+            input.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                const query = e.target.value.trim().toLowerCase();
+                
+                if (query) {
+                    clearBtn.classList.add('visible');
+                    searchQuery = query;
+                    debounceTimer = setTimeout(() => {
+                        performSearch(query);
+                    }, 300);
+                } else {
+                    clearBtn.classList.remove('visible');
+                    searchQuery = '';
+                    if (currentPlaylist) {
+                        showPlaylist(currentPlaylist);
+                    } else {
+                        showAllVideos();
+                    }
+                }
+            });
+        }
+
+        function performSearch(query) {
+            const results = videos.filter(video => 
+                video.title.toLowerCase().includes(query) ||
+                video.description.toLowerCase().includes(query) ||
+                (video.playlists && video.playlists.some(p => getPlaylistName(p).toLowerCase().includes(query)))
+            );
+            
+            currentPlaylist = null;
+            document.getElementById('page-title').textContent = `Search results: "${query}"`;
+            document.getElementById('results-info').textContent = `Found ${results.length} videos`;
+            updateSidebarActive();
+            renderVideos(results);
+        }
+
+        function clearSearch() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('clear-search').classList.remove('visible');
+            searchQuery = '';
+            showAllVideos();
+        }
+
+        // ============================================
+        // RENDERING
+        // ============================================
+        function renderSidebar() {
+            const container = document.getElementById('playlists-container');
+            
+            const playlistEntries = Object.entries(playlists);
+            
+            if (playlistEntries.length === 0) {
+                container.innerHTML = '<div style="padding: 0 16px; color: var(--text-secondary); font-size: 13px;">No playlists</div>';
+                return;
+            }
+            
+            container.innerHTML = playlistEntries.map(([id, playlist]) => {
+                const count = videos.filter(v => v.playlists && v.playlists.includes(id)).length;
+                return `
+                    <a href="#" class="playlist-item" data-playlist="${id}" onclick="showPlaylist('${id}'); return false;">
+                        <span>${playlist.icon} ${playlist.name}</span>
+                        <span class="playlist-count">${count}</span>
+                    </a>
+                `;
+            }).join('');
+        }
+
+        function updateSidebarActive() {
+            document.querySelectorAll('.sidebar-item, .playlist-item').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            if (!currentPlaylist && !searchQuery) {
+                document.querySelector('.sidebar-item').classList.add('active');
+            } else if (currentPlaylist) {
+                const item = document.querySelector(`[data-playlist="${currentPlaylist}"]`);
+                if (item) item.classList.add('active');
+            }
+        }
+
+        function renderVideos(videosToRender) {
+            const grid = document.getElementById('videos-grid');
+            
+            if (videosToRender.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <h2>No videos</h2>
+                        <p>No videos found matching your criteria.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort by date (newest first)
+            const sorted = [...videosToRender].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            grid.innerHTML = sorted.map(video => {
+                // USE THUMBNAIL IF PROVIDED, OTHERWISE GENERATE PLACEHOLDER
+                const thumbUrl = video.thumbnail ? getThumbnailUrl(video.thumbnail) : getPlaceholderThumbnail(video.title);
+                const primaryPlaylist = video.playlists && video.playlists[0];
+                
+                return `
+                    <div class="video-card" onclick="openVideo('${video.id}')">
+                        <div class="thumbnail-wrapper">
+                            <img class="thumbnail" src="${thumbUrl}" alt="${video.title}" loading="lazy" onerror="this.src='${getPlaceholderThumbnail(video.title)}'">
+                            <div class="play-overlay">
+                                <span class="play-icon">▶</span>
+                            </div>
+                        </div>
+                        <div class="video-info-card">
+                            <div class="video-title-card">${video.title}</div>
+                            <div class="video-meta">
+                                <span>${formatDate(video.date)}</span>
+                            </div>
+                            ${primaryPlaylist ? `<span class="playlist-badge">${getPlaylistIcon(primaryPlaylist)} ${getPlaylistName(primaryPlaylist)}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showAllVideos() {
+            currentPlaylist = null;
+            searchQuery = '';
+            document.getElementById('search-input').value = '';
+            document.getElementById('clear-search').classList.remove('visible');
+            document.getElementById('page-title').textContent = 'All Videos';
+            document.getElementById('results-info').textContent = `${videos.length} videos`;
+            updateSidebarActive();
+            renderVideos(videos);
+        }
+
+        function showPlaylist(playlistId) {
+            currentPlaylist = playlistId;
+            searchQuery = '';
+            document.getElementById('search-input').value = '';
+            document.getElementById('clear-search').classList.remove('visible');
+            
+            const playlist = playlists[playlistId];
+            const playlistVideos = videos.filter(v => v.playlists && v.playlists.includes(playlistId));
+            
+            document.getElementById('page-title').textContent = playlist ? `${playlist.icon} ${playlist.name}` : playlistId;
+            document.getElementById('results-info').textContent = `${playlistVideos.length} videos`;
+            updateSidebarActive();
+            renderVideos(playlistVideos);
+        }
+
+        // ============================================
+        // VIDEO PLAYBACK - WITH DEBUGGING
+        // ============================================
+        function openVideo(videoId) {
+            const video = videos.find(v => v.id === videoId);
+            if (!video) {
+                console.error('Video not found with ID:', videoId);
+                return;
+            }
+
+            history.pushState({ videoId: videoId }, '', `#${videoId}`);
+            openFullscreen(video);
+        }
+
+        function openFullscreen(video) {
+            console.log('Opening video:', video);
+            
+            const fullscreen = document.getElementById('fullscreen-video');
+            const player = document.getElementById('fullscreen-player');
+            const errorDiv = document.getElementById('video-error');
+
+            document.getElementById('main-container').style.display = 'none';
+            document.getElementById('sidebar').style.display = 'none';
+
+            const videoUrl = getVideoUrl(video.filename);
+            console.log('Video URL:', videoUrl);
+            
+            // Show URL for debugging
+            document.getElementById('video-url-display').textContent = 'URL: ' + videoUrl;
+
+            // Hide error
+            errorDiv.classList.remove('visible');
+            
+            // Set video source
+            const source = player.querySelector('source');
+            source.src = videoUrl;
+            source.type = 'video/mp4';
+            
+            // Error handling
+            player.onerror = function() {
+                console.error('Error loading video:', player.error);
+                errorDiv.classList.add('visible');
+                document.getElementById('error-url').textContent = videoUrl;
+            };
+            
+            player.onloadeddata = function() {
+                console.log('Video loaded successfully');
+                errorDiv.classList.remove('visible');
+            };
+
+            player.load();
+
+            document.getElementById('video-title').textContent = video.title;
+            document.getElementById('video-date').textContent = `Published: ${formatDate(video.date)}`;
+            document.getElementById('video-description').textContent = video.description;
+            document.getElementById('hidden-title').setAttribute('data-title', video.title);
+
+            // Playlist badge
+            const badgeContainer = document.getElementById('video-playlist-badge');
+            if (video.playlists && video.playlists.length > 0) {
+                const pl = video.playlists[0];
+                badgeContainer.innerHTML = `<span class="playlist-badge" style="background: var(--bg-card); color: var(--accent); border: 1px solid var(--accent);">${getPlaylistIcon(pl)} ${getPlaylistName(pl)}</span>`;
+            } else {
+                badgeContainer.innerHTML = '';
+            }
+
+            // Playlist navigation
+            renderPlaylistNav(video);
+
+            fullscreen.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            document.getElementById('close-fullscreen').classList.add('visible');
+
+            // Try to play
+            const playPromise = player.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log('Autoplay blocked or error:', error);
+                    // Don't show alert, just wait for user click
+                });
+            }
+
+            loadGiscus(video.title);
+            window.scrollTo(0, 0);
+        }
+
+        function renderPlaylistNav(currentVideo) {
+            const nav = document.getElementById('playlist-nav');
+            
+            if (!currentVideo.playlists || currentVideo.playlists.length === 0) {
+                nav.style.display = 'none';
+                return;
+            }
+
+            // Show first playlist
+            const playlistId = currentVideo.playlists[0];
+            const playlist = playlists[playlistId];
+            const playlistVideos = videos.filter(v => v.playlists && v.playlists.includes(playlistId));
+            
+            if (playlistVideos.length <= 1) {
+                nav.style.display = 'none';
+                return;
+            }
+
+            document.getElementById('playlist-nav-title').textContent = playlist ? `${playlist.icon} ${playlist.name}` : playlistId;
+            document.getElementById('playlist-nav-count').textContent = `${playlistVideos.length} videos`;
+            
+            document.getElementById('playlist-videos-list').innerHTML = playlistVideos.map((v, index) => {
+                // USE THUMBNAIL IF AVAILABLE
+                const thumbUrl = v.thumbnail ? getThumbnailUrl(v.thumbnail) : getPlaceholderThumbnail(v.title);
+                const isActive = v.id === currentVideo.id;
+                
+                return `
+                    <div class="playlist-video-item ${isActive ? 'active' : ''}" onclick="openVideo('${v.id}')">
+                        <span class="playlist-video-number">${isActive ? '▶' : index + 1}</span>
+                        <img src="${thumbUrl}" class="playlist-video-thumb" alt="" onerror="this.src='${getPlaceholderThumbnail(v.title)}'">
+                        <div class="playlist-video-info">
+                            <div class="playlist-video-title">${v.title}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            nav.style.display = 'block';
+        }
+
+        function closeFullscreen() {
+            const fullscreen = document.getElementById('fullscreen-video');
+            const player = document.getElementById('fullscreen-player');
+
+            player.pause();
+            player.onerror = null;
+            player.onloadeddata = null;
+            
+            fullscreen.classList.remove('active');
+            document.body.style.overflow = '';
+            document.getElementById('main-container').style.display = 'block';
+            document.getElementById('sidebar').style.display = 'block';
+            document.getElementById('close-fullscreen').classList.remove('visible');
+            document.getElementById('giscus-container').innerHTML = '';
+            document.getElementById('video-error').classList.remove('visible');
+            
+            history.pushState('', '', window.location.pathname);
+            window.scrollTo(0, 0);
+        }
+
+        function goHome() {
+            closeFullscreen();
+        }
+
+        // ============================================
+        // GISCUS COMMENTS
+        // ============================================
+        function loadGiscus(title) {
+            const container = document.getElementById('giscus-container');
+            container.innerHTML = '';
+
+            const script = document.createElement('script');
+            script.src = 'https://giscus.app/client.js';
+            script.setAttribute('data-repo', GISCUS_CONFIG.repo);
+            script.setAttribute('data-repo-id', GISCUS_CONFIG.repoId);
+            script.setAttribute('data-category', GISCUS_CONFIG.category);
+            script.setAttribute('data-category-id', GISCUS_CONFIG.categoryId);
+            script.setAttribute('data-mapping', 'specific');
+            script.setAttribute('data-term', title);
+            script.setAttribute('data-strict', '0');
+            script.setAttribute('data-reactions-enabled', GISCUS_CONFIG.reactionsEnabled);
+            script.setAttribute('data-emit-metadata', GISCUS_CONFIG.emitMetadata);
+            script.setAttribute('data-input-position', GISCUS_CONFIG.inputPosition);
+            script.setAttribute('data-theme', GISCUS_CONFIG.theme);
+            script.setAttribute('data-lang', GISCUS_CONFIG.lang);
+            script.setAttribute('data-loading', GISCUS_CONFIG.loading);
+            script.setAttribute('crossorigin', 'anonymous');
+            script.async = true;
+
+            container.appendChild(script);
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        function checkUrlHash() {
+            const hash = window.location.hash.replace('#', '');
+            if (hash) {
+                const video = videos.find(v => v.id === hash);
+                if (video) {
+                    openFullscreen(video);
+                }
+            }
+        }
+
+        window.addEventListener('popstate', function(event) {
+            if (!event.state || !event.state.videoId) {
+                const fullscreen = document.getElementById('fullscreen-video');
+                if (fullscreen.classList.contains('active')) {
+                    closeFullscreen();
+                }
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeFullscreen();
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSidebar();
+            setupSearch();
+            showAllVideos();
+            checkUrlHash();
+        });
+    </script>
 </body>
 </html>
