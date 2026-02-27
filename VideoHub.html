@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XPH Studio - Video Platform</title>
+    <title>VideoHub - Video Platform</title>
+    
+    <!-- IKONA APLIKACJI (FAVICON) - WSTAW TUTAJ -->
+    <!-- Umieść plik favicon.ico, favicon.png lub logo.png w folderze głównym -->
+    <!-- Możesz też użyć generatora favicon np. https://favicon.io/ -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico"> <!-- <-- ZMIEŃ TUTAJ -->
+    <link rel="shortcut icon" type="image/png" href="Icons/VideoHub.png"> <!-- <-- LUB TUTAJ -->
+    
     <style>
         * {
             margin: 0;
@@ -62,12 +69,12 @@
             letter-spacing: -0.5px;
         }
 
-        /* LOGO - PUT YOUR LOGO FILE HERE */
-        /* File logo.png (or other) must be in same folder as this HTML */
+        /* LOGO W NAGŁÓWKU - WSTAW TUTAJ SWOJE LOGO */
+        /* Plik logo.png (lub inny) musi być w tym samym folderze co ten HTML */
         .logo-icon {
             width: 48px;
             height: 48px;
-            background-image: url('logo.png'); /* <-- CHANGE TO YOUR LOGO FILENAME */
+            background-image: url('https://krzyzyk33.github.io/VideoHub/Icons/VideoHub.png'); 
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -674,7 +681,7 @@
         <div class="logo-section">
             <a href="#" class="logo" onclick="goHome(); return false;">
                 <div class="logo-icon"></div>
-                <span>XPH Studio</span>
+                <span>VideoHub</span>
             </a>
         </div>
 
@@ -777,81 +784,44 @@
         // CONFIGURATION - ADD VIDEOS AND PLAYLISTS HERE
         // ============================================
         
-        /*
-        HOW TO ADD A VIDEO:
-        1. Copy the template below
-        2. Paste into 'videos' array (before the closing ])
-        3. Fill in the data:
-           - id: unique identifier (no spaces!)
-           - title: video title
-           - date: date in YYYY-MM-DD format
-           - filename: video filename (e.g., "video.mp4")
-           - thumbnail: thumbnail filename (e.g., "thumb.jpg") or null for auto
-           - description: description under video
-           - playlists: ["playlist-name"] - optional, which playlist it belongs to
-        
-        HOW TO ADD A THUMBNAIL:
-        - Put JPG/PNG file in same folder as videos on GitHub
-        - Enter filename in 'thumbnail' field
-        - Example: thumbnail: "my-thumbnail.jpg"
-        */
-        
         const videos = [
-        {
-            id: "CMDAIDEMO",
-            title: "CMDAI Demo",
-            date: "2026-02-25",
-            filename: "Videos/CMDAIDemo.mp4",
-            thumbnail: "thumbnails/CMDAIDEMO.png",
-            description: "How to use CMDAI?",
-            playlists: ["cmdai"]
-        },  // <-- TUTAJ BRAKUJE PRZECINKA!
-        {
-            id: "LMvsOlvsCMDAI",
-            title: "LM Studio vs Ollama vs CMDAI",
-            date: "2026-02-27",
-            filename: "Videos/LM Studio vs Ollama vs CMDAI.mp4",
-            thumbnail: "thumbnails/LM Studio vs Ollama vs CMDAI.png",
-            description: "What will you use??.",
-            playlists: ["cmdai"]
-        }
-    ];
-            
-    
-        
+            {
+                id: "CMDAIDEMO",
+                title: "CMDAI Demo",
+                date: "2026-02-25",
+                filename: "Videos/CMDAIDemo.mp4",
+                thumbnail: "thumbnails/CMDAIDEMO.png",
+                description: "How to use CMDAI?",
+                playlists: ["cmdai"]
+            },
+            {
+                id: "LMvsOlvsCMDAI",
+                title: "LM Studio vs Ollama vs CMDAI",
+                date: "2026-02-27",
+                filename: "Videos/LM Studio vs Ollama vs CMDAI.mp4",
+                thumbnail: "thumbnails/LM Studio vs Ollama vs CMDAI.png",
+                description: "What will you use??.",
+                playlists: ["cmdai"]
+            }
+        ];
 
-        /*
-        HOW TO ADD A PLAYLIST:
-        1. Copy the template below
-        2. Paste into 'playlists' object (before closing })
-        3. Fill in the data:
-           - key: unique technical name (no spaces!)
-           - name: display name
-           - icon: emoji as icon
-        */
-        
         const playlists = {
             "cmdai": {
                 name: "CMDAI",
-                icon: "",
+                icon: "🤖",
                 description: "Videos related to CMDAI project"
             },
-            "DEMO": {
+            "demo": {
                 name: "DEMO",
-                Icon: "🔍",
-                description: "DEMO Videos"
+                icon: "🎬",
+                description: "Demo Videos"
             }
         };
-    
 
         // ============================================
         // URL CONFIGURATION - FOR GITHUB PAGES
         // ============================================
         
-        // IMPORTANT: This must be the correct GitHub Pages URL
-        // Format: https://USERNAME.github.io/REPO_NAME/
-        // Your repo: https://github.com/Krzyzyk33/VideoHub
-        // So the URL should be:
         const BASE_URL = "https://krzyzyk33.github.io/VideoHub/";
         
         // ============================================
@@ -881,7 +851,6 @@
         // HELPER FUNCTIONS
         // ============================================
         function getVideoUrl(filename) {
-            // Remove leading slash if present to avoid double slashes
             const cleanFilename = filename.startsWith('/') ? filename.slice(1) : filename;
             return BASE_URL + cleanFilename;
         }
@@ -1016,11 +985,9 @@
                 return;
             }
 
-            // Sort by date (newest first)
             const sorted = [...videosToRender].sort((a, b) => new Date(b.date) - new Date(a.date));
             
             grid.innerHTML = sorted.map(video => {
-                // USE THUMBNAIL IF PROVIDED, OTHERWISE GENERATE PLACEHOLDER
                 const thumbUrl = video.thumbnail ? getThumbnailUrl(video.thumbnail) : getPlaceholderThumbnail(video.title);
                 const primaryPlaylist = video.playlists && video.playlists[0];
                 
@@ -1071,7 +1038,7 @@
         }
 
         // ============================================
-        // VIDEO PLAYBACK - WITH DEBUGGING
+        // VIDEO PLAYBACK
         // ============================================
         function openVideo(videoId) {
             const video = videos.find(v => v.id === videoId);
@@ -1097,18 +1064,14 @@
             const videoUrl = getVideoUrl(video.filename);
             console.log('Video URL:', videoUrl);
             
-            // Show URL for debugging
             document.getElementById('video-url-display').textContent = 'URL: ' + videoUrl;
 
-            // Hide error
             errorDiv.classList.remove('visible');
             
-            // Set video source
             const source = player.querySelector('source');
             source.src = videoUrl;
             source.type = 'video/mp4';
             
-            // Error handling
             player.onerror = function() {
                 console.error('Error loading video:', player.error);
                 errorDiv.classList.add('visible');
@@ -1127,7 +1090,6 @@
             document.getElementById('video-description').textContent = video.description;
             document.getElementById('hidden-title').setAttribute('data-title', video.title);
 
-            // Playlist badge
             const badgeContainer = document.getElementById('video-playlist-badge');
             if (video.playlists && video.playlists.length > 0) {
                 const pl = video.playlists[0];
@@ -1136,19 +1098,16 @@
                 badgeContainer.innerHTML = '';
             }
 
-            // Playlist navigation
             renderPlaylistNav(video);
 
             fullscreen.classList.add('active');
             document.body.style.overflow = 'hidden';
             document.getElementById('close-fullscreen').classList.add('visible');
 
-            // Try to play
             const playPromise = player.play();
             if (playPromise !== undefined) {
                 playPromise.catch(error => {
                     console.log('Autoplay blocked or error:', error);
-                    // Don't show alert, just wait for user click
                 });
             }
 
@@ -1164,7 +1123,6 @@
                 return;
             }
 
-            // Show first playlist
             const playlistId = currentVideo.playlists[0];
             const playlist = playlists[playlistId];
             const playlistVideos = videos.filter(v => v.playlists && v.playlists.includes(playlistId));
@@ -1178,7 +1136,6 @@
             document.getElementById('playlist-nav-count').textContent = `${playlistVideos.length} videos`;
             
             document.getElementById('playlist-videos-list').innerHTML = playlistVideos.map((v, index) => {
-                // USE THUMBNAIL IF AVAILABLE
                 const thumbUrl = v.thumbnail ? getThumbnailUrl(v.thumbnail) : getPlaceholderThumbnail(v.title);
                 const isActive = v.id === currentVideo.id;
                 
