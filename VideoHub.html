@@ -909,22 +909,10 @@
         // Definicje playlist/grup
         const PLAYLISTS = {
             'cmdai-series': {
-                name: 'Seria CMDAI',
-                description: 'Wszystkie filmy związane z projektem CMDAI',
-                videos: ['cmdai-demo', 'cmdai-tutorial-1', 'cmdai-tutorial-2'],
-                icon: '🤖'
-            },
-            'tutorials': {
-                name: 'Poradniki',
-                description: 'Tutoriale i materiały edukacyjne',
-                videos: ['cmdai-tutorial-1', 'cmdai-tutorial-2'],
-                icon: '📚'
-            },
-            'demos': {
-                name: 'Dema',
-                description: 'Prezentacje i dema projektów',
-                videos: ['cmdai-demo'],
-                icon: '🎬'
+                name: 'CMDAI',
+                description: 'All videos CMDAI',
+                videos: ['CMDAIDEMO'],
+                icon: ''
             }
         };
 
@@ -939,16 +927,16 @@
         // Baza filmów - teraz z tagami i playlistami
         const VIDEOS_DB = [
             {
-                id: "cmdai-demo",
-                title: "Demo projektu CMDAI",
-                date: "2024-01-20",
-                filename: "CMDAIVideo.mp4",
+                id: "CMDAIDEMO",
+                title: "CMDAIDEMO video",
+                date: "2026-02-25",
+                filename: "Videos/CMDAIVideo.mp4",
                 thumbnail: null,
-                description: "Prezentacja możliwości systemu CMDAI. Pokazuję główne funkcje i sposób użycia.",
+                description: "A presentation of the CMDAI system's capabilities. I show the main functions and how to use them.",
                 author: "Krzyzyk33",
                 duration: "5:32",
-                tags: ['ai', 'demo'],
-                playlists: ['cmdai-series', 'demos'],
+                tags: ['ai', 'demo', 'github', 'demo'],
+                playlists: ['CMDAI'],
                 source: 'main'
             },
             {
