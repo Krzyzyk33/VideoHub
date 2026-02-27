@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XPH Studio - Platforma Wideo</title>
-    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+    <title>XPH Studio - Video Platform</title>
     <style>
         * {
             margin: 0;
@@ -63,12 +62,12 @@
             letter-spacing: -0.5px;
         }
 
-        /* LOGO - WSTAW TUTAJ SWOJE LOGO */
-        /* Plik logo.png (lub inny) musi być w tym samym folderze co ten HTML */
+        /* LOGO - PUT YOUR LOGO FILE HERE */
+        /* File logo.png (or other) must be in same folder as this HTML */
         .logo-icon {
             width: 48px;
             height: 48px;
-            background-image: url('logo.png'); /* <-- ZMIEŃ NA NAZWĘ SWOJEGO PLIKU */
+            background-image: url('logo.png'); /* <-- CHANGE TO YOUR LOGO FILENAME */
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -77,7 +76,7 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
-        /* Wyszukiwarka */
+        /* Search */
         .search-section {
             flex: 1;
             max-width: 400px;
@@ -127,68 +126,6 @@
 
         .clear-search.visible {
             display: block;
-        }
-
-        /* SEKCJA UZYTKOWNIKA */
-        .user-section {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .login-btn {
-            background: linear-gradient(135deg, #238636 0%, #2ea043 100%);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .login-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(35, 134, 54, 0.4);
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 2px solid var(--accent);
-        }
-
-        .user-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .logout-btn {
-            background: var(--bg-hover);
-            color: var(--text-secondary);
-            border: 1px solid var(--border);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .logout-btn:hover {
-            background: var(--border);
-            color: var(--text-primary);
         }
 
         /* Layout */
@@ -304,14 +241,14 @@
             margin-top: 8px;
         }
 
-        /* Grid wideo */
+        /* Video Grid */
         .videos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 24px;
         }
 
-        /* Karta wideo */
+        /* Video Card */
         .video-card {
             background-color: var(--bg-secondary);
             border-radius: 12px;
@@ -411,7 +348,7 @@
             margin-top: 8px;
         }
 
-        /* Pełny ekran wideo */
+        /* Fullscreen Video */
         .fullscreen-video {
             display: none;
             position: fixed;
@@ -443,7 +380,7 @@
             margin: 0 auto;
         }
 
-        /* ERROR OVERLAY */
+        /* Error Overlay */
         .video-error {
             display: none;
             position: absolute;
@@ -464,7 +401,7 @@
             margin-bottom: 10px;
         }
 
-        /* Sekcja informacji i komentarzy NA DOLE */
+        /* Content Below */
         .content-below {
             background: var(--bg-primary);
             border-top: 1px solid var(--border);
@@ -508,7 +445,6 @@
             border: 1px solid var(--border);
         }
 
-        /* Debug info */
         .debug-url {
             font-size: 12px;
             color: var(--text-secondary);
@@ -516,7 +452,7 @@
             word-break: break-all;
         }
 
-        /* Nawigacja playlisty */
+        /* Playlist Navigation */
         .playlist-nav {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
@@ -604,7 +540,7 @@
             color: var(--accent);
         }
 
-        /* Sekcja komentarzy */
+        /* Comments */
         .comments-section {
             margin-top: 24px;
         }
@@ -625,7 +561,7 @@
             min-height: 400px;
         }
 
-        /* Przycisk zamknięcia */
+        /* Close Button */
         .close-fullscreen {
             position: fixed;
             top: 16px;
@@ -655,12 +591,11 @@
             display: flex;
         }
 
-        /* Hidden title */
         .hidden-title {
             display: none;
         }
 
-        /* Empty state */
+        /* Empty State */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -743,47 +678,34 @@
             </a>
         </div>
 
-        <!-- WYSZUKIWARKA -->
+        <!-- Search -->
         <div class="search-section">
             <div class="search-box">
                 <span class="search-icon">🔍</span>
-                <input type="text" class="search-input" id="search-input" placeholder="Szukaj filmów..." autocomplete="off">
+                <input type="text" class="search-input" id="search-input" placeholder="Search videos..." autocomplete="off">
                 <button class="clear-search" id="clear-search" onclick="clearSearch()">✕</button>
             </div>
         </div>
 
-        <!-- SEKCJA LOGOWANIA -->
-        <div class="user-section" id="user-section">
-            <button class="login-btn" id="login-btn" onclick="login()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                </svg>
-                Zaloguj przez GitHub
-            </button>
-
-            <div class="user-profile" id="user-profile" style="display: none;">
-                <img class="user-avatar" id="user-avatar" src="" alt="Avatar">
-                <span class="user-name" id="user-name"></span>
-                <button class="logout-btn" onclick="logout()">Wyloguj</button>
-            </div>
-        </div>
+        <!-- Empty user section (login removed) -->
+        <div class="user-section" id="user-section"></div>
     </header>
 
     <div class="layout">
-        <!-- Sidebar z playlistami -->
+        <!-- Sidebar with playlists -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-section">
                 <div class="sidebar-title">Menu</div>
                 <a href="#" class="sidebar-item active" onclick="showAllVideos(); return false;">
                     <span class="icon">🏠</span>
-                    <span>Wszystkie filmy</span>
+                    <span>All Videos</span>
                 </a>
             </div>
 
             <div class="sidebar-section">
-                <div class="sidebar-title">Playlisty</div>
+                <div class="sidebar-title">Playlists</div>
                 <div id="playlists-container">
-                    <!-- Playlisty generowane dynamicznie -->
+                    <!-- Playlists generated dynamically -->
                 </div>
             </div>
         </aside>
@@ -791,33 +713,33 @@
         <!-- Main Content -->
         <main class="main-container" id="main-container">
             <div class="page-header">
-                <h1 class="page-title" id="page-title">Filmy</h1>
+                <h1 class="page-title" id="page-title">Videos</h1>
                 <div class="results-info" id="results-info"></div>
             </div>
 
             <div class="videos-grid" id="videos-grid">
-                <!-- Filmy będą tutaj generowane -->
+                <!-- Videos will be generated here -->
             </div>
         </main>
     </div>
 
-    <!-- Pełny ekran wideo -->
+    <!-- Fullscreen Video -->
     <div class="fullscreen-video" id="fullscreen-video">
         <button class="close-fullscreen" id="close-fullscreen" onclick="closeFullscreen()">←</button>
 
         <div class="video-container-full">
-            <video class="video-player-full" id="fullscreen-player" controls crossorigin="anonymous">
+            <video class="video-player-full" id="fullscreen-player" controls>
                 <source src="" type="video/mp4">
-                Twoja przeglądarka nie obsługuje odtwarzacza wideo.
+                Your browser does not support the video player.
             </video>
             <div class="video-error" id="video-error">
-                <h3>❌ Błąd ładowania wideo</h3>
-                <p>Nie można załadować filmu. Sprawdź czy plik istnieje na serwerze.</p>
+                <h3>❌ Error Loading Video</h3>
+                <p>Cannot load video. Check if file exists on server.</p>
                 <p class="debug-url" id="error-url"></p>
             </div>
         </div>
 
-        <!-- Zawartość pod filmem -->
+        <!-- Content below video -->
         <div class="content-below">
             <div class="hidden-title" id="hidden-title" data-title=""></div>
 
@@ -831,7 +753,7 @@
                 <div class="debug-url" id="video-url-display"></div>
             </div>
 
-            <!-- Nawigacja playlisty -->
+            <!-- Playlist Navigation -->
             <div class="playlist-nav" id="playlist-nav" style="display: none;">
                 <div class="playlist-nav-header">
                     <span class="playlist-nav-title" id="playlist-nav-title"></span>
@@ -843,7 +765,7 @@
             <div class="comments-section">
                 <div class="comments-header">
                     <span>💬</span>
-                    <span>Komentarze</span>
+                    <span>Comments</span>
                 </div>
                 <div class="giscus-wrapper" id="giscus-container"></div>
             </div>
@@ -852,98 +774,90 @@
 
     <script>
         // ============================================
-        // KONFIGURACJA - TUTAJ DODAJESZ FILMY I PLAYLISTY
+        // CONFIGURATION - ADD VIDEOS AND PLAYLISTS HERE
         // ============================================
         
         /*
-        JAK DODAĆ FILM:
-        1. Skopiuj wzór poniżej
-        2. Wklej w tablicę 'videos' (przed ostatnim nawiasem ])
-        3. Wypełnij dane:
-           - id: unikalny identyfikator (bez spacji!)
-           - title: tytuł filmu
-           - date: data w formacie RRRR-MM-DD
-           - filename: nazwa pliku video (np. "film.mp4")
-           - thumbnail: nazwa pliku miniaturki (np. "miniatura.jpg") lub null = automatyczna
-           - description: opis pod filmem
-           - playlists: ["nazwa-playlisty"] - opcjonalnie, do której playlisty należy
+        HOW TO ADD A VIDEO:
+        1. Copy the template below
+        2. Paste into 'videos' array (before the closing ])
+        3. Fill in the data:
+           - id: unique identifier (no spaces!)
+           - title: video title
+           - date: date in YYYY-MM-DD format
+           - filename: video filename (e.g., "video.mp4")
+           - thumbnail: thumbnail filename (e.g., "thumb.jpg") or null for auto
+           - description: description under video
+           - playlists: ["playlist-name"] - optional, which playlist it belongs to
         
-        JAK DODAĆ MINIATURKĘ:
-        - Umieść plik JPG/PNG w tym samym folderze co filmy na GitHub
-        - Wpisz nazwę pliku w polu 'thumbnail'
-        - Przykład: thumbnail: "moja-miniatura.jpg"
+        HOW TO ADD A THUMBNAIL:
+        - Put JPG/PNG file in same folder as videos on GitHub
+        - Enter filename in 'thumbnail' field
+        - Example: thumbnail: "my-thumbnail.jpg"
         */
         
         const videos = [
             {
                 id: "cmdai-demo",
-                title: "Demo projektu CMDAI",
+                title: "CMDAI Project Demo",
                 date: "2024-01-20",
                 filename: "Videos/CMDAIVideo.mp4",
-                thumbnail: null,  // <-- TU DODAJ NAZWĘ PLIKU MINIATURKI (np. "thumb.jpg") lub zostaw null
-                description: "Prezentacja możliwości systemu CMDAI.",
+                thumbnail: null,  // <-- ADD THUMBNAIL FILENAME HERE (e.g., "thumb.jpg") or leave null
+                description: "Presentation of CMDAI system capabilities.",
                 playlists: ["cmdai"]
             }
-            // DODAJ NOWE FILMY TUTAJ, PRZED ZAMKNIĘCIEM NAWIASU ]
-            // Przykład z miniaturką:
+            // ADD NEW VIDEOS HERE, BEFORE CLOSING ]
+            // Example with thumbnail:
             // {
-            //     id: "moj-film",
-            //     title: "Mój Super Film",
+            //     id: "my-video",
+            //     title: "My Super Video",
             //     date: "2024-02-27",
-            //     filename: "moj-film.mp4",
-            //     thumbnail: "moja-miniatura.jpg",  // <-- MINIATURKA
-            //     description: "To jest mój film.",
-            //     playlists: ["moja-playlista"]
+            //     filename: "my-video.mp4",
+            //     thumbnail: "my-thumbnail.jpg",  // <-- THUMBNAIL
+            //     description: "This is my video.",
+            //     playlists: ["my-playlist"]
             // }
         ];
 
         /*
-        JAK DODAĆ PLAYLISTĘ:
-        1. Skopiuj wzór poniżej
-        2. Wklej w obiekt 'playlists' (przed ostatnim nawiasem })
-        3. Wypełnij dane:
-           - klucz: unikalna nazwa techniczna (bez spacji!)
-           - name: nazwa wyświetlana
-           - icon: emoji jako ikona
+        HOW TO ADD A PLAYLIST:
+        1. Copy the template below
+        2. Paste into 'playlists' object (before closing })
+        3. Fill in the data:
+           - key: unique technical name (no spaces!)
+           - name: display name
+           - icon: emoji as icon
         */
         
         const playlists = {
             "cmdai": {
-                name: "Projekt CMDAI",
+                name: "CMDAI Project",
                 icon: "🤖",
-                description: "Filmy związane z projektem CMDAI"
+                description: "Videos related to CMDAI project"
             }
-            // DODAJ NOWE PLAYLISTY TUTAJ, PRZED ZAMKNIĘCIEM NAWIASU }
-            // Przykład:
-            // "moja-playlista": {
-            //     name: "Moja Playlist",
+            // ADD NEW PLAYLISTS HERE, BEFORE CLOSING }
+            // Example:
+            // "my-playlist": {
+            //     name: "My Playlist",
             //     icon: "🎬",
-            //     description: "Moje ulubione filmy"
+            //     description: "My favorite videos"
             // }
         };
 
         // ============================================
-        // KONFIGURACJA URL - DLA GITHUB PAGES
+        // URL CONFIGURATION - FOR GITHUB PAGES
         // ============================================
         
-        // ZMIEN TO NA SWOJE:
-        // Format: https://TWOJA_NAZWA.github.io/NAZWA_REPO/assets/
-        // Przykład: https://krzyzyk33.github.io/CMDAI/assets/
-        const BASE_URL = "https://krzyzyk33.github.io/VideoHub/VideoHub.html";
+        // IMPORTANT: This must be the correct GitHub Pages URL
+        // Format: https://USERNAME.github.io/REPO_NAME/
+        // Your repo: https://github.com/Krzyzyk33/VideoHub
+        // So the URL should be:
+        const BASE_URL = "https://krzyzyk33.github.io/VideoHub/";
         
         // ============================================
-        // RESZTA KONFIGURACJI
+        // OTHER CONFIGURATION
         // ============================================
         
-        const AUTH0_CONFIG = {
-            domain: "TWOJ_DOMAIN.auth0.com",
-            clientId: "TWOJ_CLIENT_ID",
-            authorizationParams: {
-                redirect_uri: window.location.origin + window.location.pathname,
-                connection: "github"
-            }
-        };
-
         const GISCUS_CONFIG = {
             repo: "Krzyzyk33/CMDAI",
             repoId: "R_kgDORaUIPg",
@@ -953,32 +867,33 @@
             emitMetadata: "0",
             inputPosition: "top",
             theme: "dark",
-            lang: "pl",
+            lang: "en",
             loading: "lazy"
         };
 
         // ============================================
-        // ZMIENNE GLOBALNE
+        // GLOBAL VARIABLES
         // ============================================
-        let auth0Client = null;
-        let currentUser = null;
         let currentPlaylist = null;
         let searchQuery = '';
 
         // ============================================
-        // FUNKCJE POMOCNICZE
+        // HELPER FUNCTIONS
         // ============================================
         function getVideoUrl(filename) {
-            return BASE_URL + filename;
+            // Remove leading slash if present to avoid double slashes
+            const cleanFilename = filename.startsWith('/') ? filename.slice(1) : filename;
+            return BASE_URL + cleanFilename;
         }
 
         function getThumbnailUrl(thumbnailName) {
             if (!thumbnailName) return null;
-            return BASE_URL + thumbnailName;
+            const cleanName = thumbnailName.startsWith('/') ? thumbnailName.slice(1) : thumbnailName;
+            return BASE_URL + cleanName;
         }
 
         function formatDate(dateString) {
-            return new Date(dateString).toLocaleDateString('pl-PL', {
+            return new Date(dateString).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'
@@ -1000,7 +915,7 @@
         }
 
         // ============================================
-        // WYSZUKIWANIE
+        // SEARCH
         // ============================================
         function setupSearch() {
             const input = document.getElementById('search-input');
@@ -1038,8 +953,8 @@
             );
             
             currentPlaylist = null;
-            document.getElementById('page-title').textContent = `Wyniki wyszukiwania: "${query}"`;
-            document.getElementById('results-info').textContent = `Znaleziono ${results.length} filmów`;
+            document.getElementById('page-title').textContent = `Search results: "${query}"`;
+            document.getElementById('results-info').textContent = `Found ${results.length} videos`;
             updateSidebarActive();
             renderVideos(results);
         }
@@ -1052,7 +967,7 @@
         }
 
         // ============================================
-        // RENDEROWANIE
+        // RENDERING
         // ============================================
         function renderSidebar() {
             const container = document.getElementById('playlists-container');
@@ -1060,7 +975,7 @@
             const playlistEntries = Object.entries(playlists);
             
             if (playlistEntries.length === 0) {
-                container.innerHTML = '<div style="padding: 0 16px; color: var(--text-secondary); font-size: 13px;">Brak playlist</div>';
+                container.innerHTML = '<div style="padding: 0 16px; color: var(--text-secondary); font-size: 13px;">No playlists</div>';
                 return;
             }
             
@@ -1094,18 +1009,18 @@
             if (videosToRender.length === 0) {
                 grid.innerHTML = `
                     <div class="empty-state">
-                        <h2>Brak filmów</h2>
-                        <p>Nie znaleziono filmów spełniających kryteria.</p>
+                        <h2>No videos</h2>
+                        <p>No videos found matching your criteria.</p>
                     </div>
                 `;
                 return;
             }
 
-            // Sortuj po dacie (najnowsze pierwsze)
+            // Sort by date (newest first)
             const sorted = [...videosToRender].sort((a, b) => new Date(b.date) - new Date(a.date));
             
             grid.innerHTML = sorted.map(video => {
-                // UŻYJ MINIATURKI JEŚLI PODANO, INACZEJ GENERUJ PLACEHOLDER
+                // USE THUMBNAIL IF PROVIDED, OTHERWISE GENERATE PLACEHOLDER
                 const thumbUrl = video.thumbnail ? getThumbnailUrl(video.thumbnail) : getPlaceholderThumbnail(video.title);
                 const primaryPlaylist = video.playlists && video.playlists[0];
                 
@@ -1134,8 +1049,8 @@
             searchQuery = '';
             document.getElementById('search-input').value = '';
             document.getElementById('clear-search').classList.remove('visible');
-            document.getElementById('page-title').textContent = 'Wszystkie filmy';
-            document.getElementById('results-info').textContent = `${videos.length} filmów`;
+            document.getElementById('page-title').textContent = 'All Videos';
+            document.getElementById('results-info').textContent = `${videos.length} videos`;
             updateSidebarActive();
             renderVideos(videos);
         }
@@ -1150,18 +1065,18 @@
             const playlistVideos = videos.filter(v => v.playlists && v.playlists.includes(playlistId));
             
             document.getElementById('page-title').textContent = playlist ? `${playlist.icon} ${playlist.name}` : playlistId;
-            document.getElementById('results-info').textContent = `${playlistVideos.length} filmów`;
+            document.getElementById('results-info').textContent = `${playlistVideos.length} videos`;
             updateSidebarActive();
             renderVideos(playlistVideos);
         }
 
         // ============================================
-        // ODTWARZANIE WIDEO - Z DEBUGOWANIEM
+        // VIDEO PLAYBACK - WITH DEBUGGING
         // ============================================
         function openVideo(videoId) {
             const video = videos.find(v => v.id === videoId);
             if (!video) {
-                console.error('Nie znaleziono filmu o ID:', videoId);
+                console.error('Video not found with ID:', videoId);
                 return;
             }
 
@@ -1170,7 +1085,7 @@
         }
 
         function openFullscreen(video) {
-            console.log('Otwieram film:', video);
+            console.log('Opening video:', video);
             
             const fullscreen = document.getElementById('fullscreen-video');
             const player = document.getElementById('fullscreen-player');
@@ -1180,39 +1095,39 @@
             document.getElementById('sidebar').style.display = 'none';
 
             const videoUrl = getVideoUrl(video.filename);
-            console.log('URL wideo:', videoUrl);
+            console.log('Video URL:', videoUrl);
             
-            // Pokaż URL do debugowania
+            // Show URL for debugging
             document.getElementById('video-url-display').textContent = 'URL: ' + videoUrl;
 
-            // Ukryj błąd
+            // Hide error
             errorDiv.classList.remove('visible');
             
-            // Ustaw źródło video
+            // Set video source
             const source = player.querySelector('source');
             source.src = videoUrl;
             source.type = 'video/mp4';
             
-            // Obsługa błędów
+            // Error handling
             player.onerror = function() {
-                console.error('Błąd ładowania wideo:', player.error);
+                console.error('Error loading video:', player.error);
                 errorDiv.classList.add('visible');
                 document.getElementById('error-url').textContent = videoUrl;
             };
             
             player.onloadeddata = function() {
-                console.log('Wideo załadowane pomyślnie');
+                console.log('Video loaded successfully');
                 errorDiv.classList.remove('visible');
             };
 
             player.load();
 
             document.getElementById('video-title').textContent = video.title;
-            document.getElementById('video-date').textContent = `Opublikowano: ${formatDate(video.date)}`;
+            document.getElementById('video-date').textContent = `Published: ${formatDate(video.date)}`;
             document.getElementById('video-description').textContent = video.description;
             document.getElementById('hidden-title').setAttribute('data-title', video.title);
 
-            // Badge playlisty
+            // Playlist badge
             const badgeContainer = document.getElementById('video-playlist-badge');
             if (video.playlists && video.playlists.length > 0) {
                 const pl = video.playlists[0];
@@ -1221,19 +1136,19 @@
                 badgeContainer.innerHTML = '';
             }
 
-            // Nawigacja playlisty
+            // Playlist navigation
             renderPlaylistNav(video);
 
             fullscreen.classList.add('active');
             document.body.style.overflow = 'hidden';
             document.getElementById('close-fullscreen').classList.add('visible');
 
-            // Spróbuj odtworzyć
+            // Try to play
             const playPromise = player.play();
             if (playPromise !== undefined) {
                 playPromise.catch(error => {
-                    console.log('Autoplay zablokowany lub błąd:', error);
-                    // Nie pokazuj alertu, po prostu czekaj na kliknięcie użytkownika
+                    console.log('Autoplay blocked or error:', error);
+                    // Don't show alert, just wait for user click
                 });
             }
 
@@ -1249,7 +1164,7 @@
                 return;
             }
 
-            // Pokaż pierwszą playlistę
+            // Show first playlist
             const playlistId = currentVideo.playlists[0];
             const playlist = playlists[playlistId];
             const playlistVideos = videos.filter(v => v.playlists && v.playlists.includes(playlistId));
@@ -1260,10 +1175,10 @@
             }
 
             document.getElementById('playlist-nav-title').textContent = playlist ? `${playlist.icon} ${playlist.name}` : playlistId;
-            document.getElementById('playlist-nav-count').textContent = `${playlistVideos.length} filmów`;
+            document.getElementById('playlist-nav-count').textContent = `${playlistVideos.length} videos`;
             
             document.getElementById('playlist-videos-list').innerHTML = playlistVideos.map((v, index) => {
-                // UŻYJ MINIATURKI JEŚLI DOSTĘPNA
+                // USE THUMBNAIL IF AVAILABLE
                 const thumbUrl = v.thumbnail ? getThumbnailUrl(v.thumbnail) : getPlaceholderThumbnail(v.title);
                 const isActive = v.id === currentVideo.id;
                 
@@ -1306,7 +1221,7 @@
         }
 
         // ============================================
-        // KOMENTARZE GISCUS
+        // GISCUS COMMENTS
         // ============================================
         function loadGiscus(title) {
             const container = document.getElementById('giscus-container');
@@ -1334,66 +1249,7 @@
         }
 
         // ============================================
-        // AUTH0
-        // ============================================
-        async function initAuth0() {
-            try {
-                auth0Client = await auth0.createAuth0Client({
-                    domain: AUTH0_CONFIG.domain,
-                    clientId: AUTH0_CONFIG.clientId,
-                    authorizationParams: AUTH0_CONFIG.authorizationParams
-                });
-
-                if (location.search.includes("code=") && location.search.includes("state=")) {
-                    await auth0Client.handleRedirectCallback();
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                }
-
-                const isAuthenticated = await auth0Client.isAuthenticated();
-
-                if (isAuthenticated) {
-                    currentUser = await auth0Client.getUser();
-                    showUserProfile(currentUser);
-                } else {
-                    showLoginButton();
-                }
-            } catch (error) {
-                console.error("Błąd Auth0:", error);
-                showLoginButton();
-            }
-        }
-
-        async function login() {
-            if (!auth0Client) {
-                alert("Auth0 nie jest skonfigurowany! Sprawdź AUTH0_CONFIG.");
-                return;
-            }
-            await auth0Client.loginWithRedirect();
-        }
-
-        async function logout() {
-            if (!auth0Client) return;
-            await auth0Client.logout({
-                logoutParams: {
-                    returnTo: window.location.origin + window.location.pathname
-                }
-            });
-        }
-
-        function showUserProfile(user) {
-            document.getElementById('login-btn').style.display = 'none';
-            document.getElementById('user-profile').style.display = 'flex';
-            document.getElementById('user-avatar').src = user.picture || 'https://github.com/github.png';
-            document.getElementById('user-name').textContent = user.nickname || user.name || 'Użytkownik';
-        }
-
-        function showLoginButton() {
-            document.getElementById('login-btn').style.display = 'flex';
-            document.getElementById('user-profile').style.display = 'none';
-        }
-
-        // ============================================
-        // INICJALIZACJA
+        // INITIALIZATION
         // ============================================
         function checkUrlHash() {
             const hash = window.location.hash.replace('#', '');
@@ -1419,7 +1275,6 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            initAuth0();
             renderSidebar();
             setupSearch();
             showAllVideos();
