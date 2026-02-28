@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,11 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VideoHub - Video Platform</title>
     
-    <!-- IKONA APLIKACJI (FAVICON) - WSTAW TUTAJ -->
-    <!-- Umieść plik favicon.ico, favicon.png lub logo.png w folderze głównym -->
-    <!-- Możesz też użyć generatora favicon np. https://favicon.io/ -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico"> <!-- <-- ZMIEŃ TUTAJ -->
-    <link rel="shortcut icon" type="image/png" href="Icons/VideoHub.png"> <!-- <-- LUB TUTAJ -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico"> 
+    <link rel="shortcut icon" type="image/png" href="Icons/VideoHub.png"> 
     
     <style>
         * {
@@ -27,6 +25,9 @@
             --text-secondary: #8b949e;
             --accent: #ff6b35;
             --border: #30363d;
+            --sidebar-width: 240px;
+            --sidebar-collapsed: 60px;
+            --header-height: 62px;
         }
 
         body {
@@ -42,7 +43,7 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 62px;
+            height: var(--header-height);
             background-color: var(--bg-secondary);
             border-bottom: 1px solid var(--border);
             display: flex;
@@ -50,12 +51,32 @@
             justify-content: space-between;
             padding: 0 32px;
             z-index: 1000;
+            transition: padding 0.3s ease;
         }
 
         .logo-section {
             display: flex;
             align-items: center;
             gap: 12px;
+        }
+
+        .hamburger-btn {
+            display: none;
+            width: 40px;
+            height: 40px;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 20px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hamburger-btn:hover {
+            background: var(--bg-hover);
         }
 
         .logo {
@@ -68,9 +89,7 @@
             text-decoration: none;
             letter-spacing: -0.5px;
         }
-
-        /* LOGO W NAGŁÓWKU - WSTAW TUTAJ SWOJE LOGO */
-        /* Plik logo.png (lub inny) musi być w tym samym folderze co ten HTML */
+        
         .logo-icon {
             width: 48px;
             height: 48px;
@@ -83,7 +102,6 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
-        /* Search */
         .search-section {
             flex: 1;
             max-width: 400px;
@@ -135,26 +153,64 @@
             display: block;
         }
 
-        /* Layout */
-        .layout {
+        .sidebar-toggle {
             display: flex;
-            margin-top: 62px;
-            min-height: calc(100vh - 62px);
+            width: 32px;
+            height: 32px;
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            margin-left: 8px;
         }
 
-        /* Sidebar */
+        .sidebar-toggle:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .sidebar-toggle.collapsed {
+            transform: rotate(180deg);
+        }
+
+        .layout {
+            display: flex;
+            margin-top: var(--header-height);
+            min-height: calc(100vh - var(--header-height));
+        }
+
         .sidebar {
-            width: 240px;
+            width: var(--sidebar-width);
             background: var(--bg-secondary);
             border-right: 1px solid var(--border);
             padding: 20px 0;
             position: fixed;
-            height: calc(100vh - 62px);
+            height: calc(100vh - var(--header-height));
             overflow-y: auto;
+            overflow-x: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
         }
 
         .sidebar-section {
             margin-bottom: 24px;
+        }
+
+        .sidebar.collapsed .sidebar-section {
+            margin-bottom: 16px;
         }
 
         .sidebar-title {
@@ -164,6 +220,15 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             padding: 0 16px 8px;
+            white-space: nowrap;
+            transition: opacity 0.2s;
+        }
+
+        .sidebar.collapsed .sidebar-title {
+            opacity: 0;
+            padding: 0 8px;
+            font-size: 9px;
+            text-align: center;
         }
 
         .sidebar-item {
@@ -177,6 +242,12 @@
             cursor: pointer;
             transition: all 0.15s;
             border-left: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .sidebar.collapsed .sidebar-item {
+            padding: 12px 16px;
+            justify-content: center;
         }
 
         .sidebar-item:hover {
@@ -188,9 +259,26 @@
             border-left-color: var(--accent);
         }
 
+        .sidebar.collapsed .sidebar-item.active {
+            border-left: none;
+            border-bottom: 3px solid var(--accent);
+        }
+
         .sidebar-item .icon {
             width: 20px;
             text-align: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-item .text {
+            transition: opacity 0.2s;
+        }
+
+        .sidebar.collapsed .sidebar-item .text {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
         }
 
         .playlist-item {
@@ -203,6 +291,12 @@
             font-size: 13px;
             cursor: pointer;
             transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .sidebar.collapsed .playlist-item {
+            padding: 10px 16px;
+            justify-content: center;
         }
 
         .playlist-item:hover {
@@ -220,14 +314,44 @@
             background: var(--bg-card);
             padding: 2px 6px;
             border-radius: 10px;
+            flex-shrink: 0;
+            transition: opacity 0.2s;
+        }
+
+        .sidebar.collapsed .playlist-count {
+            opacity: 0;
+            width: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .playlist-item .name {
+            transition: opacity 0.2s;
+        }
+
+        .sidebar.collapsed .playlist-item .name {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
         }
 
         /* Main Content */
         .main-container {
             flex: 1;
-            margin-left: 240px;
+            margin-left: var(--sidebar-width);
             padding: 32px;
-            max-width: calc(100% - 240px);
+            max-width: calc(100% - var(--sidebar-width));
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar.collapsed ~ .main-container {
+            margin-left: var(--sidebar-collapsed);
+            max-width: calc(100% - var(--sidebar-collapsed));
+        }
+
+        .sidebar.hidden ~ .main-container {
+            margin-left: 0;
+            max-width: 100%;
         }
 
         .page-header {
@@ -387,7 +511,6 @@
             margin: 0 auto;
         }
 
-        /* Error Overlay */
         .video-error {
             display: none;
             position: absolute;
@@ -408,7 +531,6 @@
             margin-bottom: 10px;
         }
 
-        /* Content Below */
         .content-below {
             background: var(--bg-primary);
             border-top: 1px solid var(--border);
@@ -459,7 +581,6 @@
             word-break: break-all;
         }
 
-        /* Playlist Navigation */
         .playlist-nav {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
@@ -547,7 +668,6 @@
             color: var(--accent);
         }
 
-        /* Comments */
         .comments-section {
             margin-top: 24px;
         }
@@ -568,7 +688,6 @@
             min-height: 400px;
         }
 
-        /* Close Button */
         .close-fullscreen {
             position: fixed;
             top: 16px;
@@ -602,7 +721,6 @@
             display: none;
         }
 
-        /* Empty State */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -616,10 +734,89 @@
             font-weight: 400;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        @media (max-width: 1024px) {
             .sidebar {
+                width: var(--sidebar-width);
+            }
+            
+            .sidebar.collapsed {
+                width: var(--sidebar-collapsed);
+            }
+            
+            .main-container {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --sidebar-width: 260px;
+            }
+            
+            .header {
+                padding: 0 16px;
+            }
+            
+            .hamburger-btn {
+                display: flex;
+            }
+            
+            .sidebar-toggle {
                 display: none;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                width: var(--sidebar-width);
+                box-shadow: 2px 0 12px rgba(0,0,0,0.5);
+            }
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .sidebar.collapsed {
+                width: var(--sidebar-width);
+            }
+            
+            .sidebar.collapsed .sidebar-title,
+            .sidebar.collapsed .sidebar-item .text,
+            .sidebar.collapsed .playlist-count,
+            .sidebar.collapsed .playlist-item .name {
+                opacity: 1;
+                width: auto;
+            }
+            
+            .sidebar.collapsed .sidebar-item {
+                padding: 10px 16px;
+                justify-content: flex-start;
+            }
+            
+            .sidebar.collapsed .playlist-item {
+                padding: 8px 16px 8px 32px;
+                justify-content: space-between;
+            }
+            
+            .sidebar.collapsed .sidebar-section {
+                margin-bottom: 24px;
             }
             
             .main-container {
@@ -627,30 +824,111 @@
                 max-width: 100%;
                 padding: 16px;
             }
-
-            .header {
-                padding: 0 16px;
+            
+            .sidebar.collapsed ~ .main-container,
+            .sidebar.hidden ~ .main-container {
+                margin-left: 0;
+                max-width: 100%;
             }
-
+            
             .search-section {
                 display: none;
             }
-
+            
             .videos-grid {
                 grid-template-columns: 1fr;
                 gap: 16px;
             }
-
+            
+            .video-card:hover {
+                transform: none;
+            }
+            
+            .play-overlay {
+                opacity: 1;
+                width: 48px;
+                height: 48px;
+            }
+            
+            .play-icon {
+                font-size: 18px;
+            }
+            
             .content-below {
                 padding: 16px;
             }
-
+            
             .video-player-full {
                 max-height: 50vh;
             }
-
+            
             .playlist-nav {
                 display: none;
+            }
+            
+            .page-title {
+                font-size: 20px;
+            }
+            
+            .logo span {
+                font-size: 18px;
+            }
+            
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        /* RESPONSIVE - SMALL MOBILE */
+        @media (max-width: 480px) {
+            .header {
+                padding: 0 12px;
+                height: 56px;
+            }
+            
+            .logo-section {
+                gap: 8px;
+            }
+            
+            .hamburger-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+            }
+            
+            .logo-icon {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .logo span {
+                font-size: 16px;
+            }
+            
+            .main-container {
+                padding: 12px;
+                margin-top: 56px;
+            }
+            
+            .videos-grid {
+                gap: 12px;
+            }
+            
+            .video-info-card {
+                padding: 12px;
+            }
+            
+            .video-title-card {
+                font-size: 14px;
+            }
+            
+            .close-fullscreen {
+                top: 12px;
+                left: 12px;
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
             }
         }
 
@@ -673,19 +951,48 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--border);
         }
+
+        /* TOOLTIP DLA ZWINIĘTEGO SIDEBARA */
+        .sidebar.collapsed .sidebar-item,
+        .sidebar.collapsed .playlist-item {
+            position: relative;
+        }
+
+        .sidebar.collapsed .sidebar-item:hover::after,
+        .sidebar.collapsed .playlist-item:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            margin-left: 8px;
+            border: 1px solid var(--border);
+            z-index: 1000;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="logo-section">
+            <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileSidebar()" aria-label="Menu">
+                ☰
+            </button>
             <a href="#" class="logo" onclick="goHome(); return false;">
                 <div class="logo-icon"></div>
                 <span>VideoHub</span>
             </a>
+            <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" title="Toggle Sidebar" aria-label="Toggle Sidebar">
+                ◀
+            </button>
         </div>
 
-        <!-- Search -->
         <div class="search-section">
             <div class="search-box">
                 <span class="search-icon">🔍</span>
@@ -694,30 +1001,30 @@
             </div>
         </div>
 
-        <!-- Empty user section (login removed) -->
         <div class="user-section" id="user-section"></div>
     </header>
 
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
     <div class="layout">
-        <!-- Sidebar with playlists -->
+      
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-section">
                 <div class="sidebar-title">Menu</div>
-                <a href="#" class="sidebar-item active" onclick="showAllVideos(); return false;">
+                <a href="#" class="sidebar-item active" data-tooltip="All Videos" onclick="showAllVideos(); return false;">
                     <span class="icon">🏠</span>
-                    <span>All Videos</span>
+                    <span class="text">All Videos</span>
                 </a>
             </div>
 
             <div class="sidebar-section">
                 <div class="sidebar-title">Playlists</div>
                 <div id="playlists-container">
-                    <!-- Playlists generated dynamically -->
+                   
                 </div>
             </div>
         </aside>
 
-        <!-- Main Content -->
         <main class="main-container" id="main-container">
             <div class="page-header">
                 <h1 class="page-title" id="page-title">Videos</h1>
@@ -725,12 +1032,12 @@
             </div>
 
             <div class="videos-grid" id="videos-grid">
-                <!-- Videos will be generated here -->
+
             </div>
         </main>
     </div>
 
-    <!-- Fullscreen Video -->
+
     <div class="fullscreen-video" id="fullscreen-video">
         <button class="close-fullscreen" id="close-fullscreen" onclick="closeFullscreen()">←</button>
 
@@ -746,7 +1053,7 @@
             </div>
         </div>
 
-        <!-- Content below video -->
+       
         <div class="content-below">
             <div class="hidden-title" id="hidden-title" data-title=""></div>
 
@@ -760,7 +1067,6 @@
                 <div class="debug-url" id="video-url-display"></div>
             </div>
 
-            <!-- Playlist Navigation -->
             <div class="playlist-nav" id="playlist-nav" style="display: none;">
                 <div class="playlist-nav-header">
                     <span class="playlist-nav-title" id="playlist-nav-title"></span>
@@ -823,16 +1129,9 @@
             }  
         };
 
-        // ============================================
-        // URL CONFIGURATION - FOR GITHUB PAGES
-        // ============================================
         
         const BASE_URL = "https://krzyzyk33.github.io/VideoHub/";
-        
-        // ============================================
-        // OTHER CONFIGURATION
-        // ============================================
-        
+
         const GISCUS_CONFIG = {
             repo: "Krzyzyk33/VideoHub",
             repoId: "R_kgDORaUIPg",
@@ -846,15 +1145,87 @@
             loading: "lazy"
         };
 
-        // ============================================
-        // GLOBAL VARIABLES
-        // ============================================
+
         let currentPlaylist = null;
         let searchQuery = '';
+        let sidebarCollapsed = false;
+        let mobileSidebarOpen = false;
 
-        // ============================================
-        // HELPER FUNCTIONS
-        // ============================================
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('sidebar-toggle');
+            
+            sidebarCollapsed = !sidebarCollapsed;
+            
+            if (sidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                toggleBtn.classList.add('collapsed');
+                localStorage.setItem('sidebarCollapsed', 'true');
+            } else {
+                sidebar.classList.remove('collapsed');
+                toggleBtn.classList.remove('collapsed');
+                localStorage.setItem('sidebarCollapsed', 'false');
+            }
+        }
+
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            mobileSidebarOpen = !mobileSidebarOpen;
+            
+            if (mobileSidebarOpen) {
+                sidebar.classList.add('mobile-open');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } else {
+                closeMobileSidebar();
+            }
+        }
+
+        function closeMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            mobileSidebarOpen = false;
+        }
+
+        function checkScreenSize() {
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.getElementById('hamburger-btn');
+            const toggleBtn = document.getElementById('sidebar-toggle');
+            
+  
+            if (window.innerWidth <= 768) {
+            
+                sidebar.classList.remove('collapsed');
+                toggleBtn.style.display = 'none';
+                hamburger.style.display = 'flex';
+                closeMobileSidebar();
+            } else {
+            
+                hamburger.style.display = 'none';
+                toggleBtn.style.display = 'flex';
+                
+                const savedState = localStorage.getItem('sidebarCollapsed');
+                if (savedState === 'true') {
+                    sidebar.classList.add('collapsed');
+                    toggleBtn.classList.add('collapsed');
+                    sidebarCollapsed = true;
+                } else {
+                    sidebar.classList.remove('collapsed');
+                    toggleBtn.classList.remove('collapsed');
+                    sidebarCollapsed = false;
+                }
+                
+                closeMobileSidebar();
+            }
+        }
+
+       
         function getVideoUrl(filename) {
             const cleanFilename = filename.startsWith('/') ? filename.slice(1) : filename;
             return BASE_URL + cleanFilename;
@@ -888,9 +1259,7 @@
             return playlists[playlistId] ? playlists[playlistId].icon : '📁';
         }
 
-        // ============================================
-        // SEARCH
-        // ============================================
+    
         function setupSearch() {
             const input = document.getElementById('search-input');
             const clearBtn = document.getElementById('clear-search');
@@ -931,6 +1300,11 @@
             document.getElementById('results-info').textContent = `Found ${results.length} videos`;
             updateSidebarActive();
             renderVideos(results);
+            
+    
+            if (window.innerWidth <= 768) {
+                closeMobileSidebar();
+            }
         }
 
         function clearSearch() {
@@ -940,9 +1314,7 @@
             showAllVideos();
         }
 
-        // ============================================
-        // RENDERING
-        // ============================================
+
         function renderSidebar() {
             const container = document.getElementById('playlists-container');
             
@@ -956,8 +1328,8 @@
             container.innerHTML = playlistEntries.map(([id, playlist]) => {
                 const count = videos.filter(v => v.playlists && v.playlists.includes(id)).length;
                 return `
-                    <a href="#" class="playlist-item" data-playlist="${id}" onclick="showPlaylist('${id}'); return false;">
-                        <span>${playlist.icon} ${playlist.name}</span>
+                    <a href="#" class="playlist-item" data-playlist="${id}" data-tooltip="${playlist.name}" onclick="showPlaylist('${id}'); return false;">
+                        <span class="name">${playlist.icon} ${playlist.name}</span>
                         <span class="playlist-count">${count}</span>
                     </a>
                 `;
@@ -1025,6 +1397,10 @@
             document.getElementById('results-info').textContent = `${videos.length} videos`;
             updateSidebarActive();
             renderVideos(videos);
+            
+            if (window.innerWidth <= 768) {
+                closeMobileSidebar();
+            }
         }
 
         function showPlaylist(playlistId) {
@@ -1040,11 +1416,13 @@
             document.getElementById('results-info').textContent = `${playlistVideos.length} videos`;
             updateSidebarActive();
             renderVideos(playlistVideos);
+            
+            // Zamknij sidebar na mobile
+            if (window.innerWidth <= 768) {
+                closeMobileSidebar();
+            }
         }
 
-        // ============================================
-        // VIDEO PLAYBACK
-        // ============================================
         function openVideo(videoId) {
             const video = videos.find(v => v.id === videoId);
             if (!video) {
@@ -1065,6 +1443,7 @@
 
             document.getElementById('main-container').style.display = 'none';
             document.getElementById('sidebar').style.display = 'none';
+            document.querySelector('.header').style.display = 'none';
 
             const videoUrl = getVideoUrl(video.filename);
             console.log('Video URL:', videoUrl);
@@ -1170,21 +1549,29 @@
             document.body.style.overflow = '';
             document.getElementById('main-container').style.display = 'block';
             document.getElementById('sidebar').style.display = 'block';
+            document.querySelector('.header').style.display = 'flex';
             document.getElementById('close-fullscreen').classList.remove('visible');
             document.getElementById('giscus-container').innerHTML = '';
             document.getElementById('video-error').classList.remove('visible');
             
+            // Przywróć sidebar na mobile jeśli był otwarty
+            if (window.innerWidth <= 768) {
+                closeMobileSidebar();
+            }
+            
             history.pushState('', '', window.location.pathname);
             window.scrollTo(0, 0);
+            
+      
+            checkScreenSize();
         }
 
         function goHome() {
             closeFullscreen();
+            showAllVideos();
         }
 
-        // ============================================
-        // GISCUS COMMENTS
-        // ============================================
+    
         function loadGiscus(title) {
             const container = document.getElementById('giscus-container');
             container.innerHTML = '';
@@ -1210,9 +1597,7 @@
             container.appendChild(script);
         }
 
-        // ============================================
-        // INITIALIZATION
-        // ============================================
+  
         function checkUrlHash() {
             const hash = window.location.hash.replace('#', '');
             if (hash) {
@@ -1233,12 +1618,44 @@
         });
 
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeFullscreen();
+            if (e.key === 'Escape') {
+                if (mobileSidebarOpen) {
+                    closeMobileSidebar();
+                } else {
+                    closeFullscreen();
+                }
+            }
         });
+
+        window.addEventListener('resize', () => {
+            checkScreenSize();
+        });
+
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, false);
+
+        function handleSwipe() {
+            if (window.innerWidth <= 768 && mobileSidebarOpen) {
+                // Swipe w lewo zamyka sidebar
+                if (touchStartX - touchEndX > 50) {
+                    closeMobileSidebar();
+                }
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             renderSidebar();
             setupSearch();
+            checkScreenSize();
             showAllVideos();
             checkUrlHash();
         });
